@@ -9,8 +9,8 @@
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
 
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -32,12 +32,12 @@ const int rs = 9, en = 8, d4 = 4, d5 = 5, d6 = 6, d7 = 7;
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 
 // Joysticks
-const int AxeX_Gauche = A0, AxeY_Gauche = A1;   // Robot
-const int AxeX_Droite = A2, AxeY_Droite = A3;   // Bras
+const int AxeX_Gauche = A0, AxeY_Gauche = A1;  // Robot
+const int AxeX_Droite = A2, AxeY_Droite = A3;  // Bras
 
 // Bouton Poussoir Pince
-const int OpenPince = 22, ClosePince = 23;      // Ouvrir-Fermer Pince
-const int UpPince = 24, DownPince = 25;         // Monter-Descendre Pince
+const int OpenPince = 22, ClosePince = 23;  // Ouvrir-Fermer Pince
+const int UpPince = 24, DownPince = 25;     // Monter-Descendre Pince
 
 // Batterie
 const int PinBattery = A4;
@@ -66,7 +66,7 @@ int EtatBP_OC() {
   int Write;
 
   // Open - Close
-  if(BP1 && !BP2) {
+  if (BP1 && !BP2) {
     Write = 1;
     return Write;
   } else if (BP2 && !BP1) {
@@ -84,7 +84,7 @@ int EtatBP_UD() {
   int Write;
 
   // Arrêt - Monter - Descendre
-  if(BP3 && !BP4) {
+  if (BP3 && !BP4) {
     Write = 1;
   } else if (BP4 && !BP3) {
     Write = 2;
@@ -97,7 +97,7 @@ int EtatBP_UD() {
 // Valeur Batterie
 float Batterie() {
   float ChargeLevel, Tension;
-  Tension = analogRead(PinBattery)*0.85;
+  Tension = analogRead(PinBattery) * 0.85;
   ChargeLevel = map(Tension, 875, 750, 100, 0);
   return ChargeLevel;
 }
@@ -105,7 +105,7 @@ float Batterie() {
 // Gestion du LCD
 void Display(String a, int x, int y) {
   lcd.clear();
-  lcd.setCursor(x,y);
+  lcd.setCursor(x, y);
   lcd.print(a);
 }
 
@@ -115,7 +115,7 @@ void setup() {
 
   lcd.begin(16, 2);
   lcd.clear();
-  lcd.setCursor(0,0);
+  lcd.setCursor(0, 0);
   lcd.print("DEMARRAGE");
 }
 
@@ -131,10 +131,10 @@ void loop() {
   // Si message reçu => Lecture
   if (SendTransfer.available()) {
     uint16_t sendSize = 0;
-    sendSize = SendTransfer.rxObj(data, sendSize); 
+    sendSize = SendTransfer.rxObj(data, sendSize);
   }
 
-  Display("PRET",0,0);
+  Display("PRET", 0, 0);
 
   delay(1000);
 }

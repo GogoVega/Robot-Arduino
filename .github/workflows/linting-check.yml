@@ -1,0 +1,23 @@
+name: Linting Check
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Check for linting errors
+        uses: DoozyX/clang-format-lint-action@v0.13
+        with:
+          source: './Robot/src/ ./Telecommande/src/'
+          exclude: 'none'
+          extensions: 'cpp'
+          clangFormatVersion: 13
+          style: chromium

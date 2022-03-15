@@ -9,8 +9,8 @@
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
 
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -22,27 +22,27 @@
 
 #include <Arduino.h>
 #include <LiquidCrystal.h>
+#include <SPI.h>
 #include <SerialTransfer.h>
 #include <Ultrasonic.h>
 #include <Wire.h>
-#include <SPI.h>
 
 SerialTransfer RecTransfer;
 
 Ultrasonic sonar(12, 13);
 
-#define borneENA    A0       // Vitesse Motor A
-#define borneIN1    20       // Marche avant
-#define borneIN2    21       // Marche arrière
-#define borneIN3    22       // Marche avant
-#define borneIN4    23       // Marche arrière
-#define borneENB    A1       // Vitesse Motor B
-#define borneENC    A2       // Vitesse Motor C
-#define borneIN5    24       // Marche avant
-#define borneIN6    25       // Marche arrière
-#define borneIN7    26       // Marche avant
-#define borneIN8    27       // Marche arrière
-#define borneEND    A3       // Vitesse Motor D
+#define borneENA A0  // Vitesse Motor A
+#define borneIN1 20  // Marche avant
+#define borneIN2 21  // Marche arrière
+#define borneIN3 22  // Marche avant
+#define borneIN4 23  // Marche arrière
+#define borneENB A1  // Vitesse Motor B
+#define borneENC A2  // Vitesse Motor C
+#define borneIN5 24  // Marche avant
+#define borneIN6 25  // Marche arrière
+#define borneIN7 26  // Marche avant
+#define borneIN8 27  // Marche arrière
+#define borneEND A3  // Vitesse Motor D
 
 // LCD
 const int rs = 2, en = 3, d4 = 4, d5 = 5, d6 = 6, d7 = 7;
@@ -65,28 +65,28 @@ void WriteVitesseRobot(int VG, int VD) {
     byte IN1;
     byte IN2;
     int ENA;
-  }G;
+  } G;
 
   struct SensD {
     byte IN3;
     byte IN4;
     int ENB;
-  }D;
+  } D;
 
   // Avant - Arrière - Arrêt
   if (VG >= 50) {
-    G = {HIGH,LOW,VG};
+    G = {HIGH, LOW, VG};
   } else if (VG <= -50) {
-    G = {LOW,HIGH,abs(VG)};
+    G = {LOW, HIGH, abs(VG)};
   } else {
-    G = {LOW,LOW,0};
+    G = {LOW, LOW, 0};
   }
   if (VD >= 50) {
-    D = {HIGH,LOW,VD};
+    D = {HIGH, LOW, VD};
   } else if (VD <= -50) {
-    D = {LOW,HIGH,abs(VD)};
+    D = {LOW, HIGH, abs(VD)};
   } else {
-    D = {LOW,LOW,0};
+    D = {LOW, LOW, 0};
   }
 
   // Output
@@ -99,13 +99,13 @@ void WriteVitesseRobot(int VG, int VD) {
   analogWrite(borneENB, D.ENB);
 }
 
-void ReadVitesseRobot(){
+void ReadVitesseRobot() {
   int VRX = data.AxeX_Robot;
   int VRY = data.AxeY_Robot;
   int VG, VD;
 
   // Gauche - Doite
-  if (VRY > 100){
+  if (VRY > 100) {
     VG = max(VRX - 50, -255);
     VD = min(VRX + 50, 255);
   } else if (VRY < -100) {
@@ -146,7 +146,7 @@ void setup() {
   // LCD
   lcd.begin(16, 2);
   lcd.clear();
-  lcd.setCursor(0,0);
+  lcd.setCursor(0, 0);
   lcd.print("DEMARRAGE");
 }
 
@@ -155,7 +155,7 @@ void loop() {
   recSize = RecTransfer.txObj(data, recSize);
   RecTransfer.sendData(recSize);
 
-  if(RecTransfer.available()) {
+  if (RecTransfer.available()) {
     uint16_t recSize = 0;
     recSize = RecTransfer.rxObj(data, recSize);
   }
