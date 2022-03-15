@@ -23,27 +23,33 @@
 #include <Arduino.h>
 #include <LiquidCrystal.h>
 #include <SerialTransfer.h>
+#include <Ultrasonic.h>
 #include <Wire.h>
 #include <SPI.h>
 
 SerialTransfer RecTransfer;
 
-const int borneENA = A0;       // Vitesse Motor A
-const int borneIN1 = 20;       // Marche avant
-const int borneIN2 = 21;       // Marche arrière
-const int borneIN3 = 22;       // Marche avant
-const int borneIN4 = 23;       // Marche arrière
-const int borneENB = A1;       // Vitesse Motor B
-const int borneENC = A2;       // Vitesse Motor C
-const int borneIN5 = 24;       // Marche avant
-const int borneIN6 = 25;       // Marche arrière
-const int borneIN7 = 26;       // Marche avant
-const int borneIN8 = 27;       // Marche arrière
-const int borneEND = A3;       // Vitesse Motor D
+Ultrasonic sonar(12, 13);
+
+#define borneENA    A0       // Vitesse Motor A
+#define borneIN1    20       // Marche avant
+#define borneIN2    21       // Marche arrière
+#define borneIN3    22       // Marche avant
+#define borneIN4    23       // Marche arrière
+#define borneENB    A1       // Vitesse Motor B
+#define borneENC    A2       // Vitesse Motor C
+#define borneIN5    24       // Marche avant
+#define borneIN6    25       // Marche arrière
+#define borneIN7    26       // Marche avant
+#define borneIN8    27       // Marche arrière
+#define borneEND    A3       // Vitesse Motor D
 
 // LCD
 const int rs = 2, en = 3, d4 = 4, d5 = 5, d6 = 6, d7 = 7;
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
+
+// Buzzer
+const int BuzzerPin = 22;
 
 struct STRUCT {
   int AxeX_Robot;
@@ -54,52 +60,83 @@ struct STRUCT {
   int Distance;
 } data;
 
-void WriteVitesseRobot(int v1, int v2) {
-  if (v1 >= 50) {
-    digitalWrite(borneIN1, HIGH);
-    digitalWrite(borneIN2, LOW);
-    analogWrite(borneENA, v1);
-  } else if (v1 <= -50) {
-    digitalWrite(borneIN1, LOW);
-    digitalWrite(borneIN2, HIGH);
-    analogWrite(borneENA, abs(v1));
+void WriteVitesseRobot(int VG, int VD) {
+  struct SensG {
+    byte IN1;
+    byte IN2;
+    int ENA;
+  }G;
+
+  struct SensD {
+    byte IN3;
+    byte IN4;
+    int ENB;
+  }D;
+
+  // Avant - Arrière - Arrêt
+  if (VG >= 50) {
+    G = {HIGH,LOW,VG};
+  } else if (VG <= -50) {
+    G = {LOW,HIGH,abs(VG)};
   } else {
-    digitalWrite(borneIN1, LOW);
-    digitalWrite(borneIN2, LOW);
-    analogWrite(borneENA, 0);
+    G = {LOW,LOW,0};
   }
-  if (v2 >= 50) {
-    digitalWrite(borneIN3, HIGH);
-    digitalWrite(borneIN4, LOW);
-    analogWrite(borneENB, v2);
-  } else if (v2 <= -50) {
-    digitalWrite(borneIN3, LOW);
-    digitalWrite(borneIN3, HIGH);
-    analogWrite(borneENB, abs(v2));
+  if (VD >= 50) {
+    D = {HIGH,LOW,VD};
+  } else if (VD <= -50) {
+    D = {LOW,HIGH,abs(VD)};
   } else {
-    digitalWrite(borneIN3, LOW);
-    digitalWrite(borneIN4, LOW);
-    analogWrite(borneENB, 0);
+    D = {LOW,LOW,0};
   }
+
+  // Output
+  digitalWrite(borneIN1, G.IN1);
+  digitalWrite(borneIN2, G.IN2);
+  analogWrite(borneENA, G.ENA);
+
+  digitalWrite(borneIN3, D.IN3);
+  digitalWrite(borneIN4, D.IN4);
+  analogWrite(borneENB, D.ENB);
 }
 
 void ReadVitesseRobot(){
   int VRX = data.AxeX_Robot;
   int VRY = data.AxeY_Robot;
-  int vitesseG, vitesseD;
+  int VG, VD;
 
   // Gauche - Doite
   if (VRY > 100){
-    vitesseG = max(VRX - 50, -255);
-    vitesseD = min(VRX + 50, 255);
+    VG = max(VRX - 50, -255);
+    VD = min(VRX + 50, 255);
   } else if (VRY < -100) {
-    vitesseG = min(VRX + 50, 255);
-    vitesseD = max(VRX - 50, -255);
+    VG = min(VRX + 50, 255);
+    VD = max(VRX - 50, -255);
   } else {
-    vitesseG = VRX;
-    vitesseD = VRX;
+    VG = VRX;
+    VD = VRX;
   }
-  WriteVitesseRobot(vitesseG, vitesseD);
+
+  if (VG <= -50 && VD <= -50) {
+    Buzzer(HIGH);
+  } else {
+    Buzzer(LOW);
+  }
+
+  WriteVitesseRobot(VG, VD);
+}
+
+void Sonar() {
+  float Distance = sonar.read();
+
+  if (Distance < 5) {
+    Buzzer(HIGH);
+  } else {
+    Buzzer(LOW);
+  }
+}
+
+void Buzzer(byte Value) {
+  digitalWrite(BuzzerPin, Value);
 }
 
 void setup() {

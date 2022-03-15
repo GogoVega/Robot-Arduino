@@ -28,7 +28,7 @@
 SerialTransfer SendTransfer;
 
 // LCD
-const int rs = 2, en = 3, d4 = 4, d5 = 5, d6 = 6, d7 = 7;
+const int rs = 9, en = 8, d4 = 4, d5 = 5, d6 = 6, d7 = 7;
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 
 // Joysticks
@@ -36,8 +36,8 @@ const int AxeX_Gauche = A0, AxeY_Gauche = A1;   // Robot
 const int AxeX_Droite = A2, AxeY_Droite = A3;   // Bras
 
 // Bouton Poussoir Pince
-const int OpenPince = 8, ClosePince = 9;        // Ouvrir-Fermer Pince
-const int UpPince = 10, DownPince = 11;         // Monter-Descendre Pince
+const int OpenPince = 22, ClosePince = 23;      // Ouvrir-Fermer Pince
+const int UpPince = 24, DownPince = 25;         // Monter-Descendre Pince
 
 // Batterie
 const int PinBattery = A4;
@@ -46,7 +46,7 @@ const int PinBattery = A4;
 struct STRUCT {
   int AxeX_Robot;
   int AxeY_Robot;
-  int BP_OP;
+  int BP_OC;
   int BP_UD;
   int RFID_State;
   int Distance;
@@ -62,16 +62,19 @@ int JoystickValue(int pin) {
 int EtatBP_OC() {
   int BP1 = digitalRead(OpenPince);
   int BP2 = digitalRead(ClosePince);
-  int Read = data.BP_OP;
+  int Read = data.BP_OC || 0;
   int Write;
 
   // Open - Close
-  if(BP1 && !Read) {
+  if(BP1 && !BP2) {
     Write = 1;
-  } else if (BP2 && Read) {
+    return Write;
+  } else if (BP2 && !BP1) {
     Write = 0;
+    return Write;
+  } else {
+    return Read;
   }
-  return Write;
 }
 
 // CMD Moter-Descendre la pince
@@ -120,7 +123,7 @@ void loop() {
   uint16_t sendSize = 0;
   data.AxeX_Robot = JoystickValue(AxeX_Gauche);
   data.AxeY_Robot = JoystickValue(AxeY_Gauche);
-  data.BP_OP = EtatBP_OC();
+  data.BP_OC = EtatBP_OC();
   data.BP_UD = EtatBP_UD();
   sendSize = SendTransfer.txObj(data, sendSize);
   SendTransfer.sendData(sendSize);
