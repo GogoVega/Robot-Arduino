@@ -26,18 +26,18 @@
 extern const int BuzzerPin = 8;
 
 // Definition des sorties Moteurs
-#define borneENA 2  // Vitesse Motor A
+#define borneENA 2   // Vitesse Motor A
 #define borneIN1 30  // Marche avant
 #define borneIN2 31  // Marche arrière
 #define borneIN3 32  // Marche avant
 #define borneIN4 33  // Marche arrière
-#define borneENB 3  // Vitesse Motor B
-#define borneENC 4  // Vitesse Motor C
+#define borneENB 3   // Vitesse Motor B
+#define borneENC 4   // Vitesse Motor C
 #define borneIN5 34  // Marche avant
 #define borneIN6 35  // Marche arrière
 #define borneIN7 36  // Marche avant
 #define borneIN8 37  // Marche arrière
-#define borneEND 5  // Vitesse Motor D
+#define borneEND 5   // Vitesse Motor D
 
 extern void WriteVitesseRobot(int VG, int VD) {
   struct SensG {

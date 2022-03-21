@@ -36,7 +36,7 @@ const int Pin = 5;
 // 4 Carte refusée
 // 5 Aucune carte ajoutée
 extern int CheckCode(byte Code[4]) {
-  //EEPROM.write(0, 0);
+  // EEPROM.write(0, 0);
 
   // Number of Cards
   int len = EEPROM.read(0);
@@ -59,7 +59,8 @@ extern int CheckCode(byte Code[4]) {
       Code_Read[n] = EEPROM.read((i * 4) + n + 1);
     }
 
-    if (Code_Read[0] == Code[0] && Code_Read[1] == Code[1] && Code_Read[2] == Code[2] && Code_Read[3] == Code[3]) { 
+    if (Code_Read[0] == Code[0] && Code_Read[1] == Code[1] &&
+        Code_Read[2] == Code[2] && Code_Read[3] == Code[3]) {
       if (digitalRead(Pin)) {
         return 2;
       }

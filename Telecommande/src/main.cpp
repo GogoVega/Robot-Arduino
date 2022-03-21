@@ -23,7 +23,7 @@
 #include <Adafruit_I2CDevice.h>
 #include <Arduino.h>
 #include <GyverOLED.h>
-#include <SerialTransfer.h> 
+#include <SerialTransfer.h>
 #include <Wire.h>
 #include <rfid.h>
 

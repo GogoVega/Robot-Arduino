@@ -51,11 +51,12 @@ extern int StateRFID(int State) {
 // Lecture Badge RFID
 extern byte* ReadRFID() {
   static byte Response[4] = {};
-    if (rfid.PICC_ReadCardSerial()) {
-      for (int i = 0; i < 4; i++) {
-        Response[i] = rfid.uid.uidByte[i];
-      }
+
+  if (rfid.PICC_ReadCardSerial()) {
+    for (int i = 0; i < 4; i++) {
+      Response[i] = rfid.uid.uidByte[i];
     }
+  }
 
   return Response;
 }
