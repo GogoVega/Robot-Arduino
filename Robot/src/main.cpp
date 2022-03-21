@@ -23,11 +23,11 @@
 #include <Arduino.h>
 #include <LiquidCrystal.h>
 #include <SerialTransfer.h>
-#include <Ultrasonic.h>
 #include <Servo.h>
+#include <Ultrasonic.h>
 #include <Wire.h>
-#include <rfid.h>
 #include <motor.h>
+#include <rfid.h>
 
 SerialTransfer RecTransfer;
 
@@ -63,9 +63,13 @@ int Sonar() {
     tone(BuzzerPin, 600, 500);
   }
 
-  if (Distance < MaxDistance) return Distance;
+  if (Distance < MaxDistance) {
+    return Distance;
+  }
 
-  else return MaxDistance;
+  else {
+    return MaxDistance;
+  }
 }
 
 void setup() {
@@ -101,10 +105,10 @@ void loop() {
   // Envoie si Bluethooth connecté
   if (digitalRead(BluethoothPin)) {
     uint16_t recSize = 0;
-  
+
     // Si carte RFID détectée
     if (rfid.PICC_IsNewCardPresent()) {
-      byte * CodeRead = ReadRFID();
+      byte* CodeRead = ReadRFID();
 
       data.Code[0] = CodeRead[0];
       data.Code[1] = CodeRead[1];

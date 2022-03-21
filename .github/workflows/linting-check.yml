@@ -18,6 +18,6 @@ jobs:
         with:
           source: './Robot/src/ ./Telecommande/src/'
           exclude: 'none'
-          extensions: 'cpp'
+          extensions: 'cpp,h'
           clangFormatVersion: 13
           style: chromium

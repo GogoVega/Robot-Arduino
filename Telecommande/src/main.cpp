@@ -20,9 +20,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+#include <Adafruit_I2CDevice.h>
 #include <Arduino.h>
 #include <GyverOLED.h>
-#include <Adafruit_I2CDevice.h>
 #include <SerialTransfer.h> 
 #include <Wire.h>
 #include <rfid.h>
@@ -94,10 +94,10 @@ int EtatBP_UD() {
 }
 
 // Valeurs Batterie
-double * Batterie() {
+double* Batterie() {
   float Tension = map(analogRead(PinBattery), 0, 1023, 0, 500);
   float ChargeLevel = map(Tension, 0, 500, 0, 10000);
-  static double Output[2] = {(ChargeLevel/100), (Tension/100)};
+  static double Output[2] = {(ChargeLevel / 100), (Tension / 100)};
   return Output;
 }
 
@@ -154,7 +154,7 @@ void Display() {
       break;
   }
 
-  const double * Values = Batterie();
+  const double* Values = Batterie();
 
   oled.setCursor(0, 7);
   oled.print(String(Values[0]) + "%");
@@ -173,7 +173,10 @@ int RFID() {
     State = CheckCode(data.Code);
   } else if (State) {
     State = CheckCode(data.Code);
-    if (State) State = 0;
+    if (State) {
+      State = 0;
+    }
+
   } else if (State == 2) {
     State = NewCard(data.Code);
   }
