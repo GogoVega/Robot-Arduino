@@ -22,141 +22,106 @@
 
 #include <Arduino.h>
 #include <LiquidCrystal.h>
-#include <SPI.h>
 #include <SerialTransfer.h>
 #include <Ultrasonic.h>
+#include <Servo.h>
 #include <Wire.h>
+#include <rfid.h>
+#include <motor.h>
 
 SerialTransfer RecTransfer;
 
-Ultrasonic sonar(12, 13);
-
-#define borneENA A0  // Vitesse Motor A
-#define borneIN1 20  // Marche avant
-#define borneIN2 21  // Marche arrière
-#define borneIN3 22  // Marche avant
-#define borneIN4 23  // Marche arrière
-#define borneENB A1  // Vitesse Motor B
-#define borneENC A2  // Vitesse Motor C
-#define borneIN5 24  // Marche avant
-#define borneIN6 25  // Marche arrière
-#define borneIN7 26  // Marche avant
-#define borneIN8 27  // Marche arrière
-#define borneEND A3  // Vitesse Motor D
-
 // LCD
-const int rs = 2, en = 3, d4 = 4, d5 = 5, d6 = 6, d7 = 7;
+const int rs = 22, en = 23, d4 = 24, d5 = 25, d6 = 26, d7 = 27;
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 
-// Buzzer
-const int BuzzerPin = 22;
+// Sonar
+const int MaxDistance = 400;  // cm
+Ultrasonic sonar(40, 41);
 
+// Servomoteur (PIN 9, 10)
+Servo servo;
+
+// State Bluethooth
+const int BluethoothPin = 44;
+
+// Structure des données Bluethooth
 struct STRUCT {
-  int AxeX_Robot;
-  int AxeY_Robot;
-  int BP_OP;
+  int AxeX;
+  int AxeY;
+  int BP_OC;
   int BP_UD;
+  byte Code[4];
   int RFID_State;
   int Distance;
 } data;
 
-void WriteVitesseRobot(int VG, int VD) {
-  struct SensG {
-    byte IN1;
-    byte IN2;
-    int ENA;
-  } G;
-
-  struct SensD {
-    byte IN3;
-    byte IN4;
-    int ENB;
-  } D;
-
-  // Avant - Arrière - Arrêt
-  if (VG >= 50) {
-    G = {HIGH, LOW, VG};
-  } else if (VG <= -50) {
-    G = {LOW, HIGH, abs(VG)};
-  } else {
-    G = {LOW, LOW, 0};
-  }
-  if (VD >= 50) {
-    D = {HIGH, LOW, VD};
-  } else if (VD <= -50) {
-    D = {LOW, HIGH, abs(VD)};
-  } else {
-    D = {LOW, LOW, 0};
-  }
-
-  // Output
-  digitalWrite(borneIN1, G.IN1);
-  digitalWrite(borneIN2, G.IN2);
-  analogWrite(borneENA, G.ENA);
-
-  digitalWrite(borneIN3, D.IN3);
-  digitalWrite(borneIN4, D.IN4);
-  analogWrite(borneENB, D.ENB);
-}
-
-void ReadVitesseRobot() {
-  int VRX = data.AxeX_Robot;
-  int VRY = data.AxeY_Robot;
-  int VG, VD;
-
-  // Gauche - Doite
-  if (VRY > 100) {
-    VG = max(VRX - 50, -255);
-    VD = min(VRX + 50, 255);
-  } else if (VRY < -100) {
-    VG = min(VRX + 50, 255);
-    VD = max(VRX - 50, -255);
-  } else {
-    VG = VRX;
-    VD = VRX;
-  }
-
-  if (VG <= -50 && VD <= -50) {
-    Buzzer(HIGH);
-  } else {
-    Buzzer(LOW);
-  }
-
-  WriteVitesseRobot(VG, VD);
-}
-
-void Sonar() {
-  float Distance = sonar.read();
+int Sonar() {
+  int Distance = sonar.read();
 
   if (Distance < 5) {
-    Buzzer(HIGH);
-  } else {
-    Buzzer(LOW);
+    tone(BuzzerPin, 600, 500);
   }
-}
 
-void Buzzer(byte Value) {
-  digitalWrite(BuzzerPin, Value);
+  if (Distance < MaxDistance) return Distance;
+
+  else return MaxDistance;
 }
 
 void setup() {
   Serial1.begin(38400);
   RecTransfer.begin(Serial1);
 
+  // Buzzer
+  tone(BuzzerPin, 100, 250);
+
+  // RFID
+  SPI.begin();
+  rfid.PCD_Init();
+
   // LCD
   lcd.begin(16, 2);
   lcd.clear();
-  lcd.setCursor(0, 0);
-  lcd.print("DEMARRAGE");
+  lcd.setCursor(1, 0);
+  lcd.print("DEMARRAGE...");
 }
 
 void loop() {
-  uint16_t recSize = 0;
-  recSize = RecTransfer.txObj(data, recSize);
-  RecTransfer.sendData(recSize);
-
+  // Si message reçu => Lecture
   if (RecTransfer.available()) {
     uint16_t recSize = 0;
     recSize = RecTransfer.rxObj(data, recSize);
   }
+
+  // Si Robot déverrouillé
+  if (data.RFID_State == 1) {
+    ReadVitesseRobot(data.AxeX, data.AxeY);
+  }
+
+  // Envoie si Bluethooth connecté
+  if (digitalRead(BluethoothPin)) {
+    uint16_t recSize = 0;
+  
+    // Si carte RFID détectée
+    if (rfid.PICC_IsNewCardPresent()) {
+      byte * CodeRead = ReadRFID();
+
+      data.Code[0] = CodeRead[0];
+      data.Code[1] = CodeRead[1];
+      data.Code[2] = CodeRead[2];
+      data.Code[3] = CodeRead[3];
+      data.RFID_State = StateRFID(data.RFID_State);
+    }
+
+    // Init RFID
+    rfid.PICC_HaltA();
+    rfid.PCD_StopCrypto1();
+
+    data.Distance = Sonar();
+
+    recSize = RecTransfer.txObj(data, recSize);
+    RecTransfer.sendData(recSize);
+  }
+
+  delay(1000);
 }
