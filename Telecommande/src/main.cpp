@@ -22,9 +22,9 @@
 
 #include <Arduino.h>
 #include <display.h>
-#include <utils.h>
 #include <rfid.h>
 #include <type.h>
+#include <utils.h>
 
 void setup() {
   Serial1.begin(38400);

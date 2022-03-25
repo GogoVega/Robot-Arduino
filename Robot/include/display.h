@@ -23,8 +23,8 @@
 #ifndef __DISPLAY_H
 #define __DISPLAY_H
 
-#include <Wire.h>
 #include <LiquidCrystal.h>
+#include <Wire.h>
 #include <type.h>
 
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);

@@ -23,9 +23,9 @@
 #ifndef __AUTOMATIC_H
 #define __AUTOMATIC_H
 
-#include <type.h>
 #include <motor.h>
 #include <sonar.h>
+#include <type.h>
 
 // Distance minimale avant obstacle
 // Incréméntée si le robot recule
@@ -49,7 +49,7 @@ float avoidanceChoice(float time, int choice) {
       while (time < quartTour) {
         int distance = sonar.read();
 
-         if (distance > maxDistance && time > (quartTour / 2)) {
+        if (distance > maxDistance && time > (quartTour / 2)) {
           limitDistance = 10;
           break;
         } else if (distance < minDistance) {
@@ -64,7 +64,7 @@ float avoidanceChoice(float time, int choice) {
 
     case 1:
       WriteVitesseRobot(-60, 60);
-      while (time > - quartTour) {
+      while (time > -quartTour) {
         int distance = sonar.read();
 
         if (distance > maxDistance && time < (quartTour / 2)) {
@@ -91,7 +91,8 @@ float avoidanceChoice(float time, int choice) {
 
     case 3:
       WriteVitesseRobot(-60, -60);
-      while (int(sonar.read()) < (maxDistance + backDistance)) {}
+      while (int(sonar.read()) < (maxDistance + backDistance)) {
+      }
       limitDistance += backDistance;
       break;
   }

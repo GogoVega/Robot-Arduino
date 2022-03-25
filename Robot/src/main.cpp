@@ -23,11 +23,11 @@
 #include <Arduino.h>
 #include <automatic.h>
 #include <display.h>
-#include <type.h>
 #include <motor.h>
+#include <rfid.h>
 #include <servomotor.h>
 #include <sonar.h>
-#include <rfid.h>
+#include <type.h>
 
 void setup() {
   Serial1.begin(38400);

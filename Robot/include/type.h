@@ -51,8 +51,8 @@ extern const int rs = 22, en = 23, d4 = 24, d5 = 25, d6 = 26, d7 = 27;
 #define AutoPin 45
 
 // RFID
-#define SDA_RFID 6   // Pin SDA de l'RFID
-#define RST_RFID 7   // Pin RST du RFID
+#define SDA_RFID 6  // Pin SDA de l'RFID
+#define RST_RFID 7  // Pin RST du RFID
 
 // Définition des sorties Moteurs
 #define borneENA 2   // Vitesse Motor A

@@ -23,8 +23,8 @@
 #ifndef __RFID_H
 #define __RFID_H
 
-#include <SPI.h>
 #include <MFRC522.h>
+#include <SPI.h>
 #include <type.h>
 
 MFRC522 rfid(SDA_RFID, RST_RFID);
