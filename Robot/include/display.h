@@ -20,43 +20,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include <Arduino.h>
-#include <MFRC522.h>
-#include <SPI.h>
+#ifndef __DISPLAY_H
+#define __DISPLAY_H
 
-#define SDA_RFID 6  // Pin SDA de l'RFID
-#define RST_RFID 7  // Pin RST du RFID
+#include <Wire.h>
+#include <LiquidCrystal.h>
+#include <type.h>
 
-MFRC522 rfid(SDA_RFID, RST_RFID);
+LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 
-// Gestion Etat RFID:
-//
-// 0 Robot Verouillé
-// 1 Robot Déverrouillé
-// 2 Badgez nouvelle carte
-// 3 Nouvelle carte ajoutée
-// 4 Carte refusée
-// 5 Aucune carte ajoutée
-extern int StateRFID(int State) {
-  switch (State) {
-    case 3:
-    case 4:
-    case 5:
-      return 0;
-  }
-
-  return State;
+// Gestion du LCD
+void Display() {
+  // Code LCD here
 }
 
-// Lecture Badge RFID
-extern byte* ReadRFID() {
-  static byte Response[4] = {};
-
-  if (rfid.PICC_ReadCardSerial()) {
-    for (int i = 0; i < 4; i++) {
-      Response[i] = rfid.uid.uidByte[i];
-    }
-  }
-
-  return Response;
-}
+#endif

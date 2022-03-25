@@ -20,55 +20,38 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include <Arduino.h>
-#include <display.h>
-#include <utils.h>
-#include <rfid.h>
-#include <type.h>
+#ifndef __TYPE_H
+#define __TYPE_H
 
-void setup() {
-  Serial1.begin(38400);
-  SendTransfer.begin(Serial1);
+#include <SerialTransfer.h>
 
-  // OLED
-  delay(250);
-  oled.init();
-  oled.clear();
-  oled.print("Demarrage...");
-  oled.update();
-  delay(500);
-}
+SerialTransfer SendTransfer;
 
-void loop() {
-  Display();
+// Joysticks Robot
+#define AxeX A0
+#define AxeY A1
 
-  // Si message reçu => Lecture
-  if (SendTransfer.available()) {
-    uint16_t sendSize = 0;
-    sendSize = SendTransfer.rxObj(data, sendSize);
-  }
+// Bouton Poussoir Pince
+#define OpenPince 2   // Ouvrir Pince
+#define ClosePince 3  // Fermer Pince
+#define UpPince 4     // Monter Pince
+#define DownPince 5   // Descendre Pince
 
-  // Envoie si Bluethooth connecté
-  if (digitalRead(BluethoothPin)) {
-    uint16_t sendSize = 0;
+// Batterie
+#define PinBattery A2
 
-    data.Axe_X = JoystickValue(AxeX);
-    data.Axe_Y = JoystickValue(AxeY);
-    data.BP_OC = EtatBP_OC();
-    data.BP_UD = EtatBP_UD();
+// State Bluethooth
+#define BluethoothPin 6
 
-    // Si code RFID reçu
-    if (data.Code[0] != 0) {
-      data.RFID_State = RFID();
-      data.Code[0] = 0;
-      data.Code[1] = 0;
-      data.Code[2] = 0;
-      data.Code[3] = 0;
-    }
+// Structure des données Bluethooth
+struct STRUCT {
+  int Axe_X;
+  int Axe_Y;
+  int BP_OC;
+  int BP_UD;
+  byte Code[4];
+  int RFID_State;
+  int Distance;
+} data;
 
-    sendSize = SendTransfer.txObj(data, sendSize);
-    SendTransfer.sendData(sendSize);
-  }
-
-  delay(1000);
-}
+#endif

@@ -21,56 +21,13 @@
 // SOFTWARE.
 
 #include <Arduino.h>
-#include <LiquidCrystal.h>
-#include <SerialTransfer.h>
-#include <Servo.h>
-#include <Ultrasonic.h>
-#include <Wire.h>
+#include <automatic.h>
+#include <display.h>
+#include <type.h>
 #include <motor.h>
+#include <servomotor.h>
+#include <sonar.h>
 #include <rfid.h>
-
-SerialTransfer RecTransfer;
-
-// LCD
-const int rs = 22, en = 23, d4 = 24, d5 = 25, d6 = 26, d7 = 27;
-LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
-
-// Sonar
-const int MaxDistance = 400;  // cm
-Ultrasonic sonar(40, 41);
-
-// Servomoteur (PIN 9, 10)
-Servo servo;
-
-// State Bluethooth
-const int BluethoothPin = 44;
-
-// Structure des données Bluethooth
-struct STRUCT {
-  int AxeX;
-  int AxeY;
-  int BP_OC;
-  int BP_UD;
-  byte Code[4];
-  int RFID_State;
-  int Distance;
-} data;
-
-int Sonar() {
-  int Distance = sonar.read();
-
-  if (Distance < 5) {
-    tone(BuzzerPin, 600, 500);
-  }
-
-  if (Distance < MaxDistance) {
-    return Distance;
-  }
-
-  else {
-    return MaxDistance;
-  }
-}
 
 void setup() {
   Serial1.begin(38400);
@@ -83,6 +40,10 @@ void setup() {
   SPI.begin();
   rfid.PCD_Init();
 
+  // Servomotors
+  servo.attach(ServoPin1);
+  servo.attach(ServoPin2);
+
   // LCD
   lcd.begin(16, 2);
   lcd.clear();
@@ -91,6 +52,13 @@ void setup() {
 }
 
 void loop() {
+  Display();
+
+  // Mode Automatique
+  if (digitalRead(AutoPin)) {
+    automatic();
+  }
+
   // Si message reçu => Lecture
   if (RecTransfer.available()) {
     uint16_t recSize = 0;
@@ -99,11 +67,12 @@ void loop() {
 
   // Si Robot déverrouillé
   if (data.RFID_State == 1) {
-    ReadVitesseRobot(data.AxeX, data.AxeY);
+    ReadVitesseRobot(data.Axe_X, data.Axe_Y);
+    // Servo Call
   }
 
   // Envoie si Bluethooth connecté
-  if (digitalRead(BluethoothPin)) {
+  if (digitalRead(BluethoothPin) && !digitalRead(AutoPin)) {
     uint16_t recSize = 0;
 
     // Si carte RFID détectée

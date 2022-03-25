@@ -20,55 +20,46 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include <Arduino.h>
-#include <display.h>
-#include <utils.h>
-#include <rfid.h>
+#ifndef __UTILS_H
+#define __UTILS_H
+
 #include <type.h>
 
-void setup() {
-  Serial1.begin(38400);
-  SendTransfer.begin(Serial1);
-
-  // OLED
-  delay(250);
-  oled.init();
-  oled.clear();
-  oled.print("Demarrage...");
-  oled.update();
-  delay(500);
+// Mapping value for -255 to 255
+int JoystickValue(int pin) {
+  int value = map(analogRead(pin), 0, 1023, -255, 255);
+  return value;
 }
 
-void loop() {
-  Display();
+// CMD Ouverture-Fermeture de la Pince
+int EtatBP_OC() {
+  int BP1 = digitalRead(OpenPince);
+  int BP2 = digitalRead(ClosePince);
+  int Read = data.BP_OC;
 
-  // Si message reçu => Lecture
-  if (SendTransfer.available()) {
-    uint16_t sendSize = 0;
-    sendSize = SendTransfer.rxObj(data, sendSize);
+  // Open - Close
+  if (BP1 && !BP2) {
+    return 1;
+  } else if (BP2 && !BP1) {
+    return 0;
+  } else {
+    return Read;
   }
-
-  // Envoie si Bluethooth connecté
-  if (digitalRead(BluethoothPin)) {
-    uint16_t sendSize = 0;
-
-    data.Axe_X = JoystickValue(AxeX);
-    data.Axe_Y = JoystickValue(AxeY);
-    data.BP_OC = EtatBP_OC();
-    data.BP_UD = EtatBP_UD();
-
-    // Si code RFID reçu
-    if (data.Code[0] != 0) {
-      data.RFID_State = RFID();
-      data.Code[0] = 0;
-      data.Code[1] = 0;
-      data.Code[2] = 0;
-      data.Code[3] = 0;
-    }
-
-    sendSize = SendTransfer.txObj(data, sendSize);
-    SendTransfer.sendData(sendSize);
-  }
-
-  delay(1000);
 }
+
+// CMD Moter-Descendre la pince
+int EtatBP_UD() {
+  int BP3 = digitalRead(UpPince);
+  int BP4 = digitalRead(DownPince);
+
+  // Monter - Descendre - Arrêt
+  if (BP3 && !BP4) {
+    return 1;
+  } else if (BP4 && !BP3) {
+    return 2;
+  } else {
+    return 0;
+  }
+}
+
+#endif

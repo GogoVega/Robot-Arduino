@@ -20,12 +20,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include <Arduino.h>
-#include <EEPROM.h>
+#ifndef __RFID_H
+#define __RFID_H
 
-// BP Descendre Pince
-// BP utilisé pour ajouter une carte
-const int Pin = 5;
+#include <EEPROM.h>
+#include <type.h>
 
 // Check Code RFID reçu:
 //
@@ -35,20 +34,23 @@ const int Pin = 5;
 // 3 Nouvelle carte ajoutée
 // 4 Carte refusée
 // 5 Aucune carte ajoutée
-extern int CheckCode(byte Code[4]) {
+int CheckCode(byte Code[4]) {
+  // Uncomment for the first write to initialize the memory
   // EEPROM.write(0, 0);
 
-  // Number of Cards
+  // Number of Cards saved
   int len = EEPROM.read(0);
 
-  // Save first Card
-  if ((len == 0) && (digitalRead(Pin))) {
+  // Save the first Card
+  if (!len && digitalRead(DownPince)) {
     for (int n = 0; n < 4; n++) {
       EEPROM.write((n + 1), Code[n]);
     }
 
     EEPROM.write(0, 1);
     return 3;
+  } else if (!len) {
+    return 5;
   }
 
   // Check if the Card matches
@@ -61,16 +63,12 @@ extern int CheckCode(byte Code[4]) {
 
     if (Code_Read[0] == Code[0] && Code_Read[1] == Code[1] &&
         Code_Read[2] == Code[2] && Code_Read[3] == Code[3]) {
-      if (digitalRead(Pin)) {
+      if (digitalRead(DownPince)) {
         return 2;
       }
 
       return 1;
     }
-  }
-
-  if (!len) {
-    return 5;
   }
 
   return 4;
@@ -87,3 +85,23 @@ extern int NewCard(byte Code[4]) {
   EEPROM.write(0, (len + 1));
   return 3;
 }
+
+int RFID() {
+  int State = data.RFID_State;
+
+  if (!State) {
+    State = CheckCode(data.Code);
+  } else if (State) {
+    State = CheckCode(data.Code);
+    if (State) {
+      State = 0;
+    }
+
+  } else if (State == 2) {
+    State = NewCard(data.Code);
+  }
+
+  return State;
+}
+
+#endif

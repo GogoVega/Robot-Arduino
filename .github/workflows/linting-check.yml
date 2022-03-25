@@ -16,7 +16,7 @@ jobs:
       - name: Check for linting errors
         uses: DoozyX/clang-format-lint-action@v0.13
         with:
-          source: './Robot/src/ ./Telecommande/src/'
+          source: '.'
           exclude: 'none'
           extensions: 'cpp,h'
           clangFormatVersion: 13

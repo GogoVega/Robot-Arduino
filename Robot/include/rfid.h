@@ -20,55 +20,45 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include <Arduino.h>
-#include <display.h>
-#include <utils.h>
-#include <rfid.h>
+#ifndef __RFID_H
+#define __RFID_H
+
+#include <SPI.h>
+#include <MFRC522.h>
 #include <type.h>
 
-void setup() {
-  Serial1.begin(38400);
-  SendTransfer.begin(Serial1);
+MFRC522 rfid(SDA_RFID, RST_RFID);
 
-  // OLED
-  delay(250);
-  oled.init();
-  oled.clear();
-  oled.print("Demarrage...");
-  oled.update();
-  delay(500);
-}
-
-void loop() {
-  Display();
-
-  // Si message reçu => Lecture
-  if (SendTransfer.available()) {
-    uint16_t sendSize = 0;
-    sendSize = SendTransfer.rxObj(data, sendSize);
+// Gestion Etat RFID:
+//
+// 0 Robot Verouillé
+// 1 Robot Déverrouillé
+// 2 Badgez nouvelle carte
+// 3 Nouvelle carte ajoutée
+// 4 Carte refusée
+// 5 Aucune carte ajoutée
+int StateRFID(int State) {
+  switch (State) {
+    case 3:
+    case 4:
+    case 5:
+      return 0;
   }
 
-  // Envoie si Bluethooth connecté
-  if (digitalRead(BluethoothPin)) {
-    uint16_t sendSize = 0;
+  return State;
+}
 
-    data.Axe_X = JoystickValue(AxeX);
-    data.Axe_Y = JoystickValue(AxeY);
-    data.BP_OC = EtatBP_OC();
-    data.BP_UD = EtatBP_UD();
+// Lecture Badge RFID
+byte* ReadRFID() {
+  static byte Response[4] = {};
 
-    // Si code RFID reçu
-    if (data.Code[0] != 0) {
-      data.RFID_State = RFID();
-      data.Code[0] = 0;
-      data.Code[1] = 0;
-      data.Code[2] = 0;
-      data.Code[3] = 0;
+  if (rfid.PICC_ReadCardSerial()) {
+    for (int i = 0; i < 4; i++) {
+      Response[i] = rfid.uid.uidByte[i];
     }
-
-    sendSize = SendTransfer.txObj(data, sendSize);
-    SendTransfer.sendData(sendSize);
   }
 
-  delay(1000);
+  return Response;
 }
+
+#endif

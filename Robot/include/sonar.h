@@ -20,55 +20,31 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include <Arduino.h>
-#include <display.h>
-#include <utils.h>
-#include <rfid.h>
+#ifndef __SONAR_H
+#define __SONAR_H
+
+#include <Ultrasonic.h>
 #include <type.h>
 
-void setup() {
-  Serial1.begin(38400);
-  SendTransfer.begin(Serial1);
+Ultrasonic sonar(Trig, Echo);
 
-  // OLED
-  delay(250);
-  oled.init();
-  oled.clear();
-  oled.print("Demarrage...");
-  oled.update();
-  delay(500);
-}
+// distance en cm
+const int minDistance = 5;
+const int maxDistance = 400;
 
-void loop() {
-  Display();
+int Sonar() {
+  int distance = sonar.read();
 
-  // Si message reçu => Lecture
-  if (SendTransfer.available()) {
-    uint16_t sendSize = 0;
-    sendSize = SendTransfer.rxObj(data, sendSize);
+  // Buzzer distance trop courte
+  if (distance < minDistance) {
+    tone(BuzzerPin, 600, 500);
   }
 
-  // Envoie si Bluethooth connecté
-  if (digitalRead(BluethoothPin)) {
-    uint16_t sendSize = 0;
-
-    data.Axe_X = JoystickValue(AxeX);
-    data.Axe_Y = JoystickValue(AxeY);
-    data.BP_OC = EtatBP_OC();
-    data.BP_UD = EtatBP_UD();
-
-    // Si code RFID reçu
-    if (data.Code[0] != 0) {
-      data.RFID_State = RFID();
-      data.Code[0] = 0;
-      data.Code[1] = 0;
-      data.Code[2] = 0;
-      data.Code[3] = 0;
-    }
-
-    sendSize = SendTransfer.txObj(data, sendSize);
-    SendTransfer.sendData(sendSize);
+  if (distance < maxDistance) {
+    return distance;
+  } else {
+    return maxDistance;
   }
-
-  delay(1000);
 }
+
+#endif
