@@ -20,31 +20,22 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#ifndef __SONAR_H
-#define __SONAR_H
+#ifndef __LED_H
+#define __LED_H
 
-#include <Ultrasonic.h>
 #include <type.h>
 
-Ultrasonic sonar(Trig, Echo);
-
-// distance en cm
-const int minDistance = 5;
-const int maxDistance = 400;
-
-int Sonar() {
-  int distance = sonar.read();
-
-  // Buzzer distance trop courte
-  if (distance < minDistance) {
-    tone(BuzzerPin, 600, 50);
-  }
-
-  if (distance < maxDistance) {
-    return distance;
+// Gestion des LEDs
+void Blink() {
+  // Feux croisement
+  if (data.RFID_State == 1) {
+    digitalWrite(LEDFrontPin, HIGH);
+    digitalWrite(LEDBackPin, HIGH);
   } else {
-    return maxDistance;
+    digitalWrite(LEDFrontPin, LOW);
+    digitalWrite(LEDBackPin, LOW);
   }
+  // Strip (RFID State)
 }
 
 #endif

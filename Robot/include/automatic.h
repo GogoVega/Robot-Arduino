@@ -45,7 +45,7 @@ float avoidanceChoice(float time, int choice) {
 
   switch (choice) {
     case 0:
-      WriteVitesseRobot(60, -60);
+      WriteSpeeds(60, -60);
       while (time < quartTour) {
         int distance = sonar.read();
 
@@ -63,7 +63,7 @@ float avoidanceChoice(float time, int choice) {
       return time;
 
     case 1:
-      WriteVitesseRobot(-60, 60);
+      WriteSpeeds(-60, 60);
       while (time > -quartTour) {
         int distance = sonar.read();
 
@@ -81,7 +81,7 @@ float avoidanceChoice(float time, int choice) {
       return time;
 
     case 2:
-      WriteVitesseRobot(60, -60);
+      WriteSpeeds(60, -60);
       while (time < 0) {
         time += 0.1;
         delay(100);
@@ -90,7 +90,7 @@ float avoidanceChoice(float time, int choice) {
       return time;
 
     case 3:
-      WriteVitesseRobot(-60, -60);
+      WriteSpeeds(-60, -60);
       while (int(sonar.read()) < (maxDistance + backDistance)) {
       }
       limitDistance += backDistance;
@@ -106,7 +106,7 @@ void automatic() {
   int choice = 0;
   float TimeRotation = 0;
 
-  WriteVitesseRobot(255, 255);
+  WriteSpeeds(255, 255);
 
   while (int(sonar.read()) < limitDistance) {
     if (choice > 3) {
@@ -116,12 +116,9 @@ void automatic() {
     TimeRotation = avoidanceChoice(TimeRotation, choice);
 
     choice++;
-    WriteVitesseRobot(0, 0);
-    delay(1000);
-  }
+    WriteSpeeds(0, 0);
 
-  if (!digitalRead(AutoPin)) {
-    WriteVitesseRobot(0, 0);
+    delay(1000);
   }
 }
 

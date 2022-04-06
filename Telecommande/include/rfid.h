@@ -42,14 +42,14 @@ int CheckCode(byte Code[4]) {
   int len = EEPROM.read(0);
 
   // Save the first Card
-  if (!len && digitalRead(DownPince)) {
+  if (len == 0 && digitalRead(DownPince)) {
     for (int n = 0; n < 4; n++) {
       EEPROM.write((n + 1), Code[n]);
     }
 
     EEPROM.write(0, 1);
     return 3;
-  } else if (!len) {
+  } else if (len == 0) {
     return 5;
   }
 
@@ -67,6 +67,11 @@ int CheckCode(byte Code[4]) {
         return 2;
       }
 
+      // Si déverrouillé => Verrouiller
+      if (data.RFID_State == 1) {
+        return 0;
+      }
+
       return 1;
     }
   }
@@ -75,7 +80,7 @@ int CheckCode(byte Code[4]) {
 }
 
 // Save new Card
-extern int NewCard(byte Code[4]) {
+int NewCard(byte Code[4]) {
   int len = EEPROM.read(0);
 
   for (int n = 0; n < 4; n++) {
@@ -86,19 +91,15 @@ extern int NewCard(byte Code[4]) {
   return 3;
 }
 
-int RFID() {
-  int State = data.RFID_State;
-
-  if (!State) {
-    State = CheckCode(data.Code);
-  } else if (State) {
-    State = CheckCode(data.Code);
-    if (State) {
-      State = 0;
-    }
-
-  } else if (State == 2) {
-    State = NewCard(data.Code);
+int RFID(int State) {
+  switch (State) {
+    case 0:
+    case 1:
+      State = CheckCode(data.Code);
+      break;
+    case 2:
+      State = NewCard(data.Code);
+      break;
   }
 
   return State;

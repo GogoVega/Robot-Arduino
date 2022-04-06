@@ -55,14 +55,15 @@ void Display() {
   oled.setCursor(30, 0);
   oled.print(Bluethooth());
 
-  if (data.Distance > 20) {
+  int distance = data.Distance;
+  if (distance > 20 || distance == 0) {
     if (data.BP_OC) {
       Print = "Pince: Ouverte";
     } else {
       Print = "Pince: Fermee";
     }
   } else {
-    Print = "Distance: " + String(data.Distance) + " cm";
+    Print = "Distance: " + String(distance) + " cm";
   }
 
   oled.setCursor(0, 3);

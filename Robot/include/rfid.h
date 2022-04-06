@@ -56,6 +56,10 @@ byte* ReadRFID() {
     for (int i = 0; i < 4; i++) {
       Response[i] = rfid.uid.uidByte[i];
     }
+
+    // Init RFID
+    rfid.PICC_HaltA();
+    rfid.PCD_StopCrypto1();
   }
 
   return Response;

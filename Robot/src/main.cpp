@@ -23,6 +23,7 @@
 #include <Arduino.h>
 #include <automatic.h>
 #include <display.h>
+#include <led.h>
 #include <motor.h>
 #include <rfid.h>
 #include <servomotor.h>
@@ -52,49 +53,68 @@ void setup() {
 }
 
 void loop() {
+  int Write = 0;
+
+  // Tempo signalisation
+  if (Flag == 10)
+    Flag = 0;
+  Flag += 1;
+
+  // Affichage LCD
   Display();
 
-  // Mode Automatique
+  // Gestion des LEDs
+  Blink();
+
+  // Mode Automatique - Manuel
   if (digitalRead(AutoPin)) {
     automatic();
-  }
-
-  // Si message reçu => Lecture
-  if (RecTransfer.available()) {
-    uint16_t recSize = 0;
-    recSize = RecTransfer.rxObj(data, recSize);
-  }
-
-  // Si Robot déverrouillé
-  if (data.RFID_State == 1) {
-    ReadVitesseRobot(data.Axe_X, data.Axe_Y);
-    // Servo Call
-  }
-
-  // Envoie si Bluethooth connecté
-  if (digitalRead(BluethoothPin) && !digitalRead(AutoPin)) {
-    uint16_t recSize = 0;
-
-    // Si carte RFID détectée
-    if (rfid.PICC_IsNewCardPresent()) {
-      byte* CodeRead = ReadRFID();
-
-      data.Code[0] = CodeRead[0];
-      data.Code[1] = CodeRead[1];
-      data.Code[2] = CodeRead[2];
-      data.Code[3] = CodeRead[3];
-      data.RFID_State = StateRFID(data.RFID_State);
+  } else {
+    // Si message reçu => Lecture
+    if (RecTransfer.available()) {
+      uint16_t recSize = 0;
+      recSize = RecTransfer.rxObj(data, recSize);
     }
 
-    // Init RFID
-    rfid.PICC_HaltA();
-    rfid.PCD_StopCrypto1();
+    // Si Robot déverrouillé
+    if (data.RFID_State == 1) {
+      ReadSpeeds(data.Axe_X, data.Axe_Y);
+      // Servo Call
+    } else {
+      WriteSpeeds(0, 0);
+    }
 
-    data.Distance = Sonar();
+    // Envoie si Bluethooth connecté
+    if (digitalRead(BluethoothPin)) {
+      // Si carte RFID détectée
+      if (rfid.PICC_IsNewCardPresent()) {
+        byte* CodeRead = ReadRFID();
+        Write = 1;
 
-    recSize = RecTransfer.txObj(data, recSize);
-    RecTransfer.sendData(recSize);
+        data.Code[0] = CodeRead[0];
+        data.Code[1] = CodeRead[1];
+        data.Code[2] = CodeRead[2];
+        data.Code[3] = CodeRead[3];
+        data.RFID_State = StateRFID(data.RFID_State);
+      }
+
+      // Envoie distance si < 25cm
+      int distance = Sonar();
+      if (distance < 25 && distance != 0) {
+        Write = 1;
+        data.Distance = distance;
+      } else if (distance > 25 && distance != 0) {
+        Write = 1;
+        data.Distance = 0;
+      }
+
+      // Ecriture si changement
+      if (Write) {
+        uint16_t recSize = 0;
+        recSize = RecTransfer.txObj(data, recSize);
+        RecTransfer.sendData(recSize);
+      }
+    }
   }
-
-  delay(1000);
+  delay(100);
 }

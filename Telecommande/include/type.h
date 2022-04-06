@@ -27,9 +27,11 @@
 
 SerialTransfer SendTransfer;
 
-// Joysticks Robot
-#define AxeX A0
-#define AxeY A1
+// Batterie
+#define PinBattery A2
+
+// Bluethooth State
+#define BluethoothPin 6
 
 // Bouton Poussoir Pince
 #define OpenPince 2   // Ouvrir Pince
@@ -37,11 +39,9 @@ SerialTransfer SendTransfer;
 #define UpPince 4     // Monter Pince
 #define DownPince 5   // Descendre Pince
 
-// Batterie
-#define PinBattery A2
-
-// State Bluethooth
-#define BluethoothPin 6
+// Joysticks Robot
+#define AxeX A0
+#define AxeY A1
 
 // Structure des données Bluethooth
 struct STRUCT {

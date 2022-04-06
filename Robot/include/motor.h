@@ -25,66 +25,68 @@
 
 #include <type.h>
 
-void WriteVitesseRobot(int VG, int VD) {
-  struct SensG {
-    byte IN1;
-    byte IN2;
-    int ENA;
-  } G;
+const int minSpeed = 60;  // Vitesse minimale de démarrage du moteur
+const int limitSpeed = (minSpeed - 10);  // Vitesse minimale (précision)
 
-  struct SensD {
-    byte IN3;
-    byte IN4;
-    int ENB;
-  } D;
+struct Sense {
+  byte DO1;
+  byte DO2;
+  int AO;
+} dataMotor;
 
-  // Avant - Arrière - Arrêt
-  if (VG >= 50) {
-    G = {HIGH, LOW, VG};
-  } else if (VG <= -50) {
-    G = {LOW, HIGH, abs(VG)};
+// Avant - Arrière - Arrêt
+Sense SenseRotation(int speed) {
+  if (speed >= limitSpeed) {
+    return {HIGH, LOW, speed};
+  } else if (speed <= -limitSpeed) {
+    return {LOW, HIGH, abs(speed)};
   } else {
-    G = {LOW, LOW, 0};
+    return {LOW, LOW, 0};
   }
-  if (VD >= 50) {
-    D = {HIGH, LOW, VD};
-  } else if (VD <= -50) {
-    D = {LOW, HIGH, abs(VD)};
-  } else {
-    D = {LOW, LOW, 0};
-  }
-
-  // Outputs
-  digitalWrite(borneIN1, G.IN1);
-  digitalWrite(borneIN2, G.IN2);
-  analogWrite(borneENA, G.ENA);
-
-  digitalWrite(borneIN3, D.IN3);
-  digitalWrite(borneIN4, D.IN4);
-  analogWrite(borneENB, D.ENB);
 }
 
-void ReadVitesseRobot(int VRX, int VRY) {
-  int VG, VD;
+void WriteSpeeds(int leftSpeed, int rightSpeed) {
+  Sense left = SenseRotation(leftSpeed);
+  digitalWrite(borneIN1, left.DO1);
+  digitalWrite(borneIN2, left.DO2);
 
-  // Gauche - Doite
-  if (VRY > 100) {
-    VG = max(VRX - 60, -255);
-    VD = min(VRX + 60, 255);
-  } else if (VRY < -100) {
-    VG = min(VRX + 60, 255);
-    VD = max(VRX - 60, -255);
+  Sense right = SenseRotation(rightSpeed);
+  digitalWrite(borneIN3, right.DO1);
+  digitalWrite(borneIN4, right.DO2);
+
+  analogWrite(borneENA, left.AO);
+  analogWrite(borneENB, right.AO);
+
+  // Si marche arrière
+  if (leftSpeed <= -limitSpeed && rightSpeed <= -limitSpeed) {
+    // Feux marche arrière
+    digitalWrite(LEDReversePin, HIGH);
+
+    // Buzzer marche arrière
+    if (Flag == 1) {
+      tone(BuzzerPin, 200, 250);
+    }
   } else {
-    VG = VRX;
-    VD = VRX;
+    digitalWrite(LEDReversePin, LOW);
+  }
+}
+
+void ReadSpeeds(int Speed_X, int Speed_Y) {
+  int leftSpeed = 0, rightSpeed = 0;
+
+  // Gauche - Droite
+  if (Speed_Y > 100) {
+    leftSpeed = max(Speed_X - minSpeed, -255);
+    rightSpeed = min(Speed_X + minSpeed, 255);
+  } else if (Speed_Y < -100) {
+    leftSpeed = min(Speed_X + minSpeed, 255);
+    rightSpeed = max(Speed_X - minSpeed, -255);
+  } else {
+    leftSpeed = Speed_X;
+    rightSpeed = Speed_X;
   }
 
-  // Buzzer marche arrière
-  if (VG <= -50 && VD <= -50) {
-    tone(BuzzerPin, 200, 500);
-  }
-
-  WriteVitesseRobot(VG, VD);
+  WriteSpeeds(leftSpeed, rightSpeed);
 }
 
 #endif

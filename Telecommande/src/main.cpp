@@ -59,7 +59,7 @@ void loop() {
 
     // Si code RFID reçu
     if (data.Code[0] != 0) {
-      data.RFID_State = RFID();
+      data.RFID_State = RFID(data.RFID_State);
       data.Code[0] = 0;
       data.Code[1] = 0;
       data.Code[2] = 0;
@@ -70,5 +70,5 @@ void loop() {
     SendTransfer.sendData(sendSize);
   }
 
-  delay(1000);
+  delay(100);
 }
