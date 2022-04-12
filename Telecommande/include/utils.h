@@ -27,35 +27,19 @@
 
 // Mapping value for -255 to 255
 int JoystickValue(int pin) {
-  int value = map(analogRead(pin), 0, 1023, -255, 255);
-  return value;
-}
-
-// CMD Ouverture-Fermeture de la Pince
-int EtatBP_OC() {
-  int BP1 = digitalRead(OpenPince);
-  int BP2 = digitalRead(ClosePince);
-  int Read = data.BP_OC;
-
-  // Open - Close
-  if (BP1 && !BP2) {
-    return 1;
-  } else if (BP2 && !BP1) {
-    return 0;
-  } else {
-    return Read;
-  }
+  return map(analogRead(pin), 0, 1023, -255, 255);
 }
 
 // CMD Moter-Descendre la pince
-int EtatBP_UD() {
-  int BP3 = digitalRead(UpPince);
-  int BP4 = digitalRead(DownPince);
+int EtatBP(int pin_1, int pin_2) {
+  const int BP1 = digitalRead(pin_1);
+  const int BP2 = digitalRead(pin_2);
 
   // Monter - Descendre - Arrêt
-  if (BP3 && !BP4) {
+  // Fermer - Ouvrir - Arrêt
+  if (BP1 && !BP2) {
     return 1;
-  } else if (BP4 && !BP3) {
+  } else if (BP2 && !BP1) {
     return 2;
   } else {
     return 0;

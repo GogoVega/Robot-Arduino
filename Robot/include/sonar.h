@@ -33,7 +33,7 @@ const int minDistance = 5;
 const int maxDistance = 400;
 
 int Sonar() {
-  int distance = sonar.read();
+  const int distance = sonar.read();
 
   // Buzzer distance trop courte
   if (distance < minDistance) {

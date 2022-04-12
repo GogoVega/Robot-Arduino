@@ -39,7 +39,7 @@ int CheckCode(byte Code[4]) {
   // EEPROM.write(0, 0);
 
   // Number of Cards saved
-  int len = EEPROM.read(0);
+  const int len = EEPROM.read(0);
 
   // Save the first Card
   if (len == 0 && digitalRead(DownPince)) {
@@ -81,7 +81,7 @@ int CheckCode(byte Code[4]) {
 
 // Save new Card
 int NewCard(byte Code[4]) {
-  int len = EEPROM.read(0);
+  const int len = EEPROM.read(0);
 
   for (int n = 0; n < 4; n++) {
     EEPROM.write((n + (len * 4) + 1), Code[n]);

@@ -31,9 +31,12 @@ GyverOLED<SSH1106_128x64> oled(0x3C);
 
 // Valeurs Batterie
 double* Batterie() {
-  float Tension = map(analogRead(PinBattery), 0, 1023, 0, 500);
-  float ChargeLevel = map(Tension, 0, 500, 0, 10000);
-  static double Output[2] = {(ChargeLevel / 100), (Tension / 100)};
+  static double Output[2] = {};
+  const float Tension = map(analogRead(BatteryPin), 0, 1023, 0, 500);
+  const float ChargeLevel = map(Tension, 0, 500, 0, 10000);
+  Output[0] = ChargeLevel / 100;
+  Output[1] = Tension / 100;
+
   return Output;
 }
 
@@ -48,19 +51,21 @@ String Bluethooth() {
 
 // Gestion de l'OLED
 void Display() {
-  String Print;
-
   oled.clear();
 
   oled.setCursor(30, 0);
   oled.print(Bluethooth());
 
-  int distance = data.Distance;
+  String Print;
+  const int distance = data.Distance;
+
   if (distance > 20 || distance == 0) {
-    if (data.BP_OC) {
-      Print = "Pince: Ouverte";
+    if (data.BP_OC == 1) {
+      Print = "Pince: Ouverture";
+    } else if (data.BP_OC == 2) {
+      Print = "Pince: Fermeture";
     } else {
-      Print = "Pince: Fermee";
+      Print = "Pince: Arret";
     }
   } else {
     Print = "Distance: " + String(distance) + " cm";

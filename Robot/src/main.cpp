@@ -30,35 +30,47 @@
 #include <sonar.h>
 #include <type.h>
 
+// Tempos (50ms)
+int Flag = 0;
+
 void setup() {
-  Serial1.begin(38400);
-  RecTransfer.begin(Serial1);
+  // LCD
+  lcd.begin(16, 2);
+  lcd.clear();
+  lcd.setCursor(1, 0);
+  lcd.print("DEMARRAGE...");
 
   // Buzzer
-  tone(BuzzerPin, 100, 250);
+  tone(BuzzerPin, 120, 500);
+
+  delay(250);
+
+  // Bluethooth
+  Serial1.begin(38400);
+  RecTransfer.begin(Serial1);
 
   // RFID
   SPI.begin();
   rfid.PCD_Init();
 
   // Servomotors
-  servo.attach(ServoPin1);
-  servo.attach(ServoPin2);
+  servo_OC.attach(ServoOCPin);
+  servo_UD.attach(ServoUDPin);
+  servoGo();
 
-  // LCD
-  lcd.begin(16, 2);
-  lcd.clear();
-  lcd.setCursor(1, 0);
-  lcd.print("DEMARRAGE...");
+  // Strip LED
+  strip.begin();
+  strip.show();
+  strip.setBrightness(Brightness);
+  StartUp(strip.Color(0, 255, 0), 20);
 }
 
 void loop() {
   int Write = 0;
 
   // Tempo signalisation
-  if (Flag == 10)
+  if (++Flag == 20)
     Flag = 0;
-  Flag += 1;
 
   // Affichage LCD
   Display();
@@ -70,8 +82,10 @@ void loop() {
   if (digitalRead(AutoPin)) {
     automatic();
   } else {
+    const uint8_t status = RecTransfer.available();
+
     // Si message reçu => Lecture
-    if (RecTransfer.available()) {
+    if (status) {
       uint16_t recSize = 0;
       recSize = RecTransfer.rxObj(data, recSize);
     }
@@ -108,13 +122,14 @@ void loop() {
         data.Distance = 0;
       }
 
-      // Ecriture si changement
-      if (Write) {
+      // Ecriture si changement et pas d'erreur
+      if (Write && status) {
         uint16_t recSize = 0;
         recSize = RecTransfer.txObj(data, recSize);
         RecTransfer.sendData(recSize);
       }
     }
   }
-  delay(100);
+
+  delay(50);
 }

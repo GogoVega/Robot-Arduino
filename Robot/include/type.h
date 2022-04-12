@@ -43,12 +43,9 @@ SerialTransfer RecTransfer;
 extern const int rs = 22, en = 23, d4 = 24, d5 = 25, d6 = 26, d7 = 27;
 
 // LEDs
-#define LEDFrontPin 46    // LED Avant
-#define LEDBackPin 47     // LED Arrière
-#define LEDReversePin 48  // LED Marche arrière
-
-// Tempos (100ms)
-int Flag = 0;
+#define Brightness 100
+#define LEDPIN 11
+#define NUMPIXELS 16
 
 // Définition des sorties Moteurs
 #define borneENA 2   // Vitesse Motor A
@@ -70,8 +67,8 @@ int Flag = 0;
 // MISO 50, MOSI 51, SCK (SCL) 52
 
 // Servomoteurs
-#define ServoPin1 9
-#define ServoPin2 10
+#define ServoOCPin 9
+#define ServoUDPin 10
 
 // Sonar
 #define Trig 40

@@ -28,7 +28,7 @@
 SerialTransfer SendTransfer;
 
 // Batterie
-#define PinBattery A2
+#define BatteryPin A2
 
 // Bluethooth State
 #define BluethoothPin 6

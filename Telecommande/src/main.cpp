@@ -40,6 +40,7 @@ void setup() {
 }
 
 void loop() {
+  // Gestion OLED
   Display();
 
   // Si message reçu => Lecture
@@ -54,8 +55,8 @@ void loop() {
 
     data.Axe_X = JoystickValue(AxeX);
     data.Axe_Y = JoystickValue(AxeY);
-    data.BP_OC = EtatBP_OC();
-    data.BP_UD = EtatBP_UD();
+    data.BP_OC = EtatBP(OpenPince, ClosePince);
+    data.BP_UD = EtatBP(UpPince, DownPince);
 
     // Si code RFID reçu
     if (data.Code[0] != 0) {
@@ -70,5 +71,5 @@ void loop() {
     SendTransfer.sendData(sendSize);
   }
 
-  delay(100);
+  delay(50);
 }
