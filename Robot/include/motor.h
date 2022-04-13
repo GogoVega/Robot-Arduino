@@ -26,7 +26,7 @@
 #include <led.h>
 #include <type.h>
 
-#define minSpeed 60  // Vitesse minimale de démarrage du moteur
+#define minSpeed 60                 // Vitesse minimale de démarrage du moteur
 #define limitSpeed (minSpeed - 10)  // Vitesse minimale (précision)
 
 struct Sense {
