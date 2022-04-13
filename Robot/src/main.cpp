@@ -30,9 +30,6 @@
 #include <sonar.h>
 #include <type.h>
 
-// Tempos (50ms)
-int Flag = 0;
-
 void setup() {
   // LCD
   lcd.begin(16, 2);

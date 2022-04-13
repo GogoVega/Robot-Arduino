@@ -85,4 +85,7 @@ struct STRUCT {
   int Distance;
 } data;
 
+// Tempos (50ms)
+int Flag = 0;
+
 #endif

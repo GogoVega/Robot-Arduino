@@ -23,10 +23,11 @@
 #ifndef __MOTOR_H
 #define __MOTOR_H
 
+#include <led.h>
 #include <type.h>
 
-const int minSpeed = 60;  // Vitesse minimale de démarrage du moteur
-const int limitSpeed = (minSpeed - 10);  // Vitesse minimale (précision)
+#define minSpeed 60  // Vitesse minimale de démarrage du moteur
+#define limitSpeed (minSpeed - 10)  // Vitesse minimale (précision)
 
 struct Sense {
   byte DO1;
@@ -64,9 +65,10 @@ void WriteSpeeds(int leftSpeed, int rightSpeed) {
 
     // Buzzer marche arrière
     if (Flag == 1) {
-      tone(BuzzerPin, 200, 250);
+      tone(BuzzerPin, 200, 500);
     }
   } else {
+    // Feux marche arrière OFF
     digitalWrite(LEDReversePin, LOW);
   }
 }

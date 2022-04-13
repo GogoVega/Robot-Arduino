@@ -56,23 +56,18 @@ void Display() {
   oled.setCursor(30, 0);
   oled.print(Bluethooth());
 
-  String Print;
-  const int distance = data.Distance;
-
-  if (distance > 20 || distance == 0) {
+  oled.setCursor(0, 3);
+  if (data.Distance > 20 || data.Distance == 0) {
     if (data.BP_OC == 1) {
-      Print = "Pince: Ouverture";
+      oled.print("Pince: Ouverture");
     } else if (data.BP_OC == 2) {
-      Print = "Pince: Fermeture";
+      oled.print("Pince: Fermeture");
     } else {
-      Print = "Pince: Arret";
+      oled.print("Pince: Arret");
     }
   } else {
-    Print = "Distance: " + String(distance) + " cm";
+    oled.print("Distance: " + String(data.Distance) + " cm");
   }
-
-  oled.setCursor(0, 3);
-  oled.print(Print);
 
   oled.setCursor(0, 5);
   switch (data.RFID_State) {

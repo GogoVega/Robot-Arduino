@@ -28,11 +28,9 @@
 
 Ultrasonic sonar(Trig, Echo);
 
-// distance en cm
-const int minDistance = 5;
-const int maxDistance = 400;
-
 int Sonar() {
+  // distance en cm
+  const int minDistance = 5, maxDistance = 400;
   const int distance = sonar.read();
 
   // Buzzer distance trop courte
