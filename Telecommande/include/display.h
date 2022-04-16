@@ -23,7 +23,6 @@
 #ifndef __DISPLAY_H
 #define __DISPLAY_H
 
-#include <Adafruit_I2CDevice.h>
 #include <GyverOLED.h>
 #include <type.h>
 
@@ -49,6 +48,39 @@ String Bluethooth() {
   }
 }
 
+// Etat RFID
+String RFID_State() {
+  switch (data.RFID_State) {
+    case 0:
+      return "Robot: Verrouille";
+    case 1:
+      return "Robot: Deverrouille";
+    case 2:
+      return "Badgez nouvelle carte";
+    case 3:
+      return "Nouvelle carte ajoutee";
+    case 4:
+      return "Carte refusee!";
+    case 5:
+      return "Aucune carte ajoutee!";
+  }
+}
+
+// Etat Pince et Distance
+String DisplayState() {
+  if (data.Distance > 20 || data.Distance == 0) {
+    if (data.BP_OC == 1) {
+      return "Pince: Ouverture";
+    } else if (data.BP_OC == 2) {
+      return "Pince: Fermeture";
+    } else {
+      return "Pince: Arret";
+    }
+  } else {
+    return "Distance: " + String(data.Distance) + " cm";
+  }
+}
+
 // Gestion de l'OLED
 void Display() {
   oled.clear();
@@ -57,39 +89,10 @@ void Display() {
   oled.print(Bluethooth());
 
   oled.setCursor(0, 3);
-  if (data.Distance > 20 || data.Distance == 0) {
-    if (data.BP_OC == 1) {
-      oled.print("Pince: Ouverture");
-    } else if (data.BP_OC == 2) {
-      oled.print("Pince: Fermeture");
-    } else {
-      oled.print("Pince: Arret");
-    }
-  } else {
-    oled.print("Distance: " + String(data.Distance) + " cm");
-  }
+  oled.print(DisplayState());
 
   oled.setCursor(0, 5);
-  switch (data.RFID_State) {
-    case 0:
-      oled.print("Robot: Verrouille");
-      break;
-    case 1:
-      oled.print("Robot: Deverrouille");
-      break;
-    case 2:
-      oled.print("Badgez nouvelle carte");
-      break;
-    case 3:
-      oled.print("Nouvelle carte ajoutee");
-      break;
-    case 4:
-      oled.print("Carte refusee!");
-      break;
-    case 5:
-      oled.print("Aucune carte ajoutee!");
-      break;
-  }
+  oled.print(RFID_State());
 
   const double* Values = Batterie();
 

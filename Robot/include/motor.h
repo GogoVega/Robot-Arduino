@@ -29,14 +29,14 @@
 #define minSpeed 60                 // Vitesse minimale de démarrage du moteur
 #define limitSpeed (minSpeed - 10)  // Vitesse minimale (précision)
 
-struct Sense {
+struct Motor {
   byte DO1;
   byte DO2;
   int AO;
-} dataMotor;
+};
 
 // Avant - Arrière - Arrêt
-Sense SenseRotation(int speed) {
+Motor SenseRotation(int speed) {
   if (speed >= limitSpeed) {
     return {HIGH, LOW, speed};
   } else if (speed <= -limitSpeed) {
@@ -47,11 +47,11 @@ Sense SenseRotation(int speed) {
 }
 
 void WriteSpeeds(int leftSpeed, int rightSpeed) {
-  Sense left = SenseRotation(leftSpeed);
+  Motor left = SenseRotation(leftSpeed);
   digitalWrite(borneIN1, left.DO1);
   digitalWrite(borneIN2, left.DO2);
 
-  Sense right = SenseRotation(rightSpeed);
+  Motor right = SenseRotation(rightSpeed);
   digitalWrite(borneIN3, right.DO1);
   digitalWrite(borneIN4, right.DO2);
 
@@ -61,7 +61,7 @@ void WriteSpeeds(int leftSpeed, int rightSpeed) {
   // Si marche arrière
   if (leftSpeed <= -limitSpeed && rightSpeed <= -limitSpeed) {
     // Feux marche arrière
-    digitalWrite(LEDReversePin, HIGH);
+    Backlights(1);
 
     // Buzzer marche arrière
     if (Flag == 1) {
@@ -69,7 +69,7 @@ void WriteSpeeds(int leftSpeed, int rightSpeed) {
     }
   } else {
     // Feux marche arrière OFF
-    digitalWrite(LEDReversePin, LOW);
+    Backlights(0);
   }
 }
 
