@@ -90,7 +90,7 @@ void loop() {
     // Si Robot déverrouillé
     if (data.RFID_State == 1) {
       ReadSpeeds(data.Axe_X, data.Axe_Y);
-      // Servo Call
+      servoGo();
     } else {
       WriteSpeeds(0, 0);
     }
