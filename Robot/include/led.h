@@ -30,7 +30,7 @@ Adafruit_NeoPixel strip(NUMPIXELS, LEDPIN, NEO_GRB + NEO_KHZ800);
 
 // Alerte lumineuse
 void Alert(uint32_t color) {
-  for(int i = 0; i < NUMPIXELS; i++) {
+  for (int i = 0; i < NUMPIXELS; i++) {
     strip.setPixelColor(i, color);
   }
 
@@ -59,7 +59,8 @@ int Blinking(uint32_t color, int num, int actual) {
     } else {
       sens = -1;
     }
-  } if (sens == -1) {
+  }
+  if (sens == -1) {
     if ((actual - 1) >= 0) {
       strip.setPixelColor(actual, strip.Color(0, 0, 0));
       strip.show();
@@ -102,7 +103,7 @@ void Headlights() {
     if (digitalRead(AutoPin) || data.RFID_State == 1) {
       strip.clear();
 
-      for(int i = 0; i < 4; i++) {
+      for (int i = 0; i < 4; i++) {
         uint32_t color;
 
         if (i < 2)
@@ -125,7 +126,7 @@ void Headlights() {
 
 // Eclairage démarrage du robot
 void StartUp(uint32_t color, int wait) {
-  for(int i = 0; i < NUMPIXELS; i++) {
+  for (int i = 0; i < NUMPIXELS; i++) {
     strip.setPixelColor(i, color);
     strip.show();
     delay(wait);
@@ -140,21 +141,22 @@ void Blink() {
 
   if (!digitalRead(AutoPin)) {
     if (!digitalRead(BluethoothPin)) {
-      actualPixel = Blinking(strip.Color(255, 165, 0), NUMPIXELS, actualPixel);
+      actualPixel =
+          Blinking(strip.Color(255, 165, 0), NUMPIXELS, actualPixel);
     } else {
       switch (data.RFID_State) {
         case 0:
           actualPixel = Blinking(strip.Color(0, 0, 255), NUMPIXELS, actualPixel);
           break;
         case 2:
-          Alert(strip.Color(255, 165, 0)); // Orange
+          Alert(strip.Color(255, 165, 0));  // Orange
           break;
         case 3:
-          Alert(strip.Color(0, 255, 0));   // Vert
+          Alert(strip.Color(0, 255, 0));  // Vert
           break;
         case 4:
         case 5:
-          Alert(strip.Color(255, 0, 0));   // Rouge
+          Alert(strip.Color(255, 0, 0));  // Rouge
           break;
       }
 
