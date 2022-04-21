@@ -141,12 +141,12 @@ void Blink() {
 
   if (!digitalRead(AutoPin)) {
     if (!digitalRead(BluethoothPin)) {
-      actualPixel =
-          Blinking(strip.Color(255, 165, 0), NUMPIXELS, actualPixel);
+      actualPixel = Blinking(strip.Color(255, 165, 0), NUMPIXELS, actualPixel);
     } else {
       switch (data.RFID_State) {
         case 0:
-          actualPixel = Blinking(strip.Color(0, 0, 255), NUMPIXELS, actualPixel);
+          actualPixel =
+              Blinking(strip.Color(0, 0, 255), NUMPIXELS, actualPixel);
           break;
         case 2:
           Alert(strip.Color(255, 165, 0));  // Orange
