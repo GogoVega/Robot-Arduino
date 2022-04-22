@@ -40,6 +40,8 @@ void setup() {
 }
 
 void loop() {
+  unsigned long Time = millis();
+
   // Gestion OLED
   Display();
 
@@ -71,5 +73,6 @@ void loop() {
     SendTransfer.sendData(sendSize);
   }
 
-  delay(50);
+  while (millis() < Time + 50) {
+  }
 }
