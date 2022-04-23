@@ -20,27 +20,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#ifndef __CONNECTION_H
-#define __CONNECTION_H
+#ifndef RFID_Card_h
+#define RFID_Card_h
 
-#if defined(__AVR_ATmega328__) || defined(__AVR_ATmega328P__)
-// Arduino NANO OR UNO
-#include <Adafruit_GFX.h>
-#include <SoftwareSerial.h>
+#include <Arduino.h>
 
-#define RX 11
-#define TX 12
-
-SoftwareSerial Serial1(RX, TX);
-
-#elif defined(__AVR_ATmega2560__)
-// Arduino Mega 2560
-#include <Adafruit_I2CDevice.h>
-
-#else
-
-#error “Unsupported board selected!”
-
-#endif
+class RFID_Card {
+  public:
+    boolean cardCheck(byte Code[4]);
+    boolean saveCard(byte Code[4]);
+    int cardNumber(void);
+    void clear(void);
+  private:
+    int nbr = 0;
+};
 
 #endif

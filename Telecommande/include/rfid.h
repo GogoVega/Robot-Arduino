@@ -23,8 +23,10 @@
 #ifndef __RFID_H
 #define __RFID_H
 
-#include <EEPROM.h>
+#include <RFID_Card.h>
 #include <type.h>
+
+RFID_Card myCard;
 
 // Check Code RFID reçu:
 //
@@ -34,46 +36,39 @@
 // 3 Nouvelle carte ajoutée
 // 4 Carte refusée
 // 5 Aucune carte ajoutée
+// 9 ERROR FLASH
 int CheckCode(byte Code[4]) {
-  // Uncomment for the first write to initialize the memory
-  // EEPROM.write(0, 0);
+  // Uncomment for the first write to erase the memory
+  // myCard.clear();
 
   // Number of Cards saved
-  const int len = EEPROM.read(0);
+  const int len = myCard.cardNumber();
 
-  // Save the first Card
-  if (len == 0 && digitalRead(DownPince)) {
-    for (int n = 0; n < 4; n++) {
-      EEPROM.write((n + 1), Code[n]);
+  if (!len) {
+    if (digitalRead(DownPince)) {
+      // Save the first Card
+      if (!myCard.saveCard(Code)) {
+        return 3;
+      }
+
+      return 9;
     }
 
-    EEPROM.write(0, 1);
-    return 3;
-  } else if (len == 0) {
     return 5;
   }
 
-  // Check if the Card matches
-  for (int i = 0; i < len; i++) {
-    byte Code_Read[] = {};
-
-    for (int n = 0; n < 4; n++) {
-      Code_Read[n] = EEPROM.read((i * 4) + n + 1);
+  if (myCard.cardCheck(Code)) {
+    // Si déverrouillé => Verrouiller
+    if (data.RFID_State == 1) {
+      return 0;
     }
 
-    if (Code_Read[0] == Code[0] && Code_Read[1] == Code[1] &&
-        Code_Read[2] == Code[2] && Code_Read[3] == Code[3]) {
-      if (digitalRead(DownPince)) {
-        return 2;
-      }
-
-      // Si déverrouillé => Verrouiller
-      if (data.RFID_State == 1) {
-        return 0;
-      }
-
-      return 1;
+    // Si demande enregistrement
+    if (digitalRead(DownPince)) {
+      return 2;
     }
+
+    return 1;
   }
 
   return 4;
@@ -81,16 +76,14 @@ int CheckCode(byte Code[4]) {
 
 // Save new Card
 int NewCard(byte Code[4]) {
-  const int len = EEPROM.read(0);
-
-  for (int n = 0; n < 4; n++) {
-    EEPROM.write((n + (len * 4) + 1), Code[n]);
+  if (!myCard.saveCard(Code)) {
+    return 3;
   }
 
-  EEPROM.write(0, (len + 1));
-  return 3;
+  return 9;
 }
 
+// Gestion RFID
 int RFID(int State) {
   switch (State) {
     case 0:

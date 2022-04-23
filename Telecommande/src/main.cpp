@@ -21,7 +21,6 @@
 // SOFTWARE.
 
 #include <Arduino.h>
-#include <connection.h>
 #include <display.h>
 #include <rfid.h>
 #include <type.h>

@@ -23,6 +23,7 @@
 #ifndef __DISPLAY_H
 #define __DISPLAY_H
 
+#include <Adafruit_I2CDevice.h>
 #include <GyverOLED.h>
 #include <type.h>
 
@@ -63,7 +64,11 @@ String RFID_State() {
       return "Carte refusee!";
     case 5:
       return "Aucune carte ajoutee!";
+    case 9:
+      return "ERROR FLASH!!!";
   }
+
+  return "ERROR DISPLAY";
 }
 
 // Etat Pince et Distance

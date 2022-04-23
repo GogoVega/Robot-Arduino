@@ -37,11 +37,13 @@ MFRC522 rfid(SDA_RFID, RST_RFID);
 // 3 Nouvelle carte ajoutée
 // 4 Carte refusée
 // 5 Aucune carte ajoutée
+// 9 ERROR FLASH
 int StateRFID(int State) {
   switch (State) {
     case 3:
     case 4:
     case 5:
+    case 9:
       return 0;
   }
 
