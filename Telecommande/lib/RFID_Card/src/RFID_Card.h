@@ -20,57 +20,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+#ifndef RFID_Card_h
+#define RFID_Card_h
+
 #include <Arduino.h>
-#include <connection.h>
-#include <display.h>
-#include <rfid.h>
-#include <type.h>
-#include <utils.h>
 
-void setup() {
-  Serial1.begin(38400);
-  SendTransfer.begin(Serial1);
+class RFID_Card {
+public:
+  boolean cardCheck(byte Code[4]);
+  boolean saveCard(byte Code[4]);
+  int cardNumber(void);
+  void clear(void);
+private:
+  int nbr = 0;
+};
 
-  // OLED
-  delay(250);
-  oled.begin(SSD1306_SWITCHCAPVCC, 0x3C);
-  oled.clearDisplay();
-  oled.print("Demarrage...");
-  oled.display();
-  delay(500);
-}
-
-void loop() {
-  // Gestion OLED
-  Display();
-
-  // Si message reçu => Lecture
-  if (SendTransfer.available()) {
-    uint16_t sendSize = 0;
-    sendSize = SendTransfer.rxObj(data, sendSize);
-  }
-
-  // Envoie si Bluethooth connecté
-  if (digitalRead(BluethoothPin)) {
-    uint16_t sendSize = 0;
-
-    data.Axe_X = JoystickValue(AxeX);
-    data.Axe_Y = JoystickValue(AxeY);
-    data.BP_OC = EtatBP(OpenPince, ClosePince);
-    data.BP_UD = EtatBP(UpPince, DownPince);
-
-    // Si code RFID reçu
-    if (data.Code[0] != 0) {
-      data.RFID_State = RFID(data.RFID_State);
-      data.Code[0] = 0;
-      data.Code[1] = 0;
-      data.Code[2] = 0;
-      data.Code[3] = 0;
-    }
-
-    sendSize = SendTransfer.txObj(data, sendSize);
-    SendTransfer.sendData(sendSize);
-  }
-
-  delay(50);
-}
+#endif

@@ -24,10 +24,10 @@
 #define __DISPLAY_H
 
 #include <Adafruit_I2CDevice.h>
-#include <GyverOLED.h>
+#include <Adafruit_SSD1306.h>
 #include <type.h>
 
-GyverOLED<SSH1106_128x64> oled(0x3C);
+Adafruit_SSD1306 oled(128, 64, &Wire);
 
 // Valeurs Batterie
 double* Batterie() {
@@ -88,7 +88,7 @@ String DisplayState() {
 
 // Gestion de l'OLED
 void Display() {
-  oled.clear();
+  oled.clearDisplay();
 
   oled.setCursor(30, 0);
   oled.print(Bluethooth());
@@ -107,7 +107,7 @@ void Display() {
   oled.setCursor(98, 7);
   oled.print(String(Values[1]) + "V");
 
-  oled.update();
+  oled.display();
 }
 
 #endif

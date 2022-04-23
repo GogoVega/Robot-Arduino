@@ -1,0 +1,16 @@
+{
+  "name": "RFID Card",
+  "version": "1.0.0",
+  "repository":
+  {
+    "type": "git",
+    "url": "https://github.com/ArduiChar/RFID_Card.git"
+  },
+  "authors":
+  {
+    "name": "Gauthier Dandele",
+    "url": "https://github.com/GogoVega",
+    "maintainer": true
+  },
+  "license": "MIT"
+}

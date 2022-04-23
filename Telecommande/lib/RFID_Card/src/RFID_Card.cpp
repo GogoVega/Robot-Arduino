@@ -32,13 +32,11 @@ void RFID_Card::clear() {
   EEPROM.write(0, 0);
 }
 
-
 // Number of Cards saved
 int RFID_Card::cardNumber() {
   nbr = EEPROM.read(0);
   return nbr;
 }
-
 
 // Save the new Card
 boolean RFID_Card::saveCard(byte Code[4]) {
@@ -62,7 +60,6 @@ boolean RFID_Card::saveCard(byte Code[4]) {
   return mismatch;
 }
 
-
 // Check if the Card matches
 boolean RFID_Card::cardCheck(byte Code[4]) {
   nbr = cardNumber();
@@ -76,68 +73,6 @@ boolean RFID_Card::cardCheck(byte Code[4]) {
 
     if (Code_Read[0] == Code[0] && Code_Read[1] == Code[1] &&
         Code_Read[2] == Code[2] && Code_Read[3] == Code[3]) {
-      return true;
-    }
-  }
-
-  return false;
-}
-
-#elif defined(ARDUINO_ARCH_RP2040)
-// Raspberry Pi Pico
-
-#include "hardware/flash.h"
-
-#define FLASH_TARGET_OFFSET (256 * 1024)
-
-const uint8_t *flash_target_contents =
-    (const uint8_t *) (XIP_BASE + FLASH_TARGET_OFFSET);
-
-
-// Erasing target region
-void RFID_Card::clear() {
-  flash_range_erase(FLASH_TARGET_OFFSET, FLASH_SECTOR_SIZE);
-}
-
-
-// Number of Cards saved
-int RFID_Card::cardNumber() {
-  nbr = flash_target_contents[0];
-  return nbr;
-}
-
-
-// Save the new Card
-boolean RFID_Card::saveCard(byte Code[4]) {
-  uint8_t random_data[FLASH_PAGE_SIZE];
-  bool mismatch = false;
-  nbr = cardNumber();
-
-  random_data[0] = (nbr + 1);
-  for (int n = 0; n < 4; n++) {
-    random_data[((nbr * 4) + 1 + n)] = Code[n];
-  }
-
-  flash_range_program(FLASH_TARGET_OFFSET, random_data, FLASH_PAGE_SIZE);
-
-  for (unsigned int i = 0; i < FLASH_PAGE_SIZE; i++) {
-    if (random_data[i] != flash_target_contents[i])
-      mismatch = true;
-  }
-
-  return mismatch;
-}
-
-
-// Check if the Card matches
-boolean RFID_Card::cardCheck(byte Code[4]) {
-  const int i = ((nbr - 1) * 4) + 1;
-  nbr = cardNumber();
-
-  for (int n = 0; n < nbr; n++) {
-    if (Code[0] == flash_target_contents[i] && Code[1] ==
-        flash_target_contents[i + 1] && Code[2] == flash_target_contents[i + 2] &&
-            Code[3] == flash_target_contents[i + 3]) {
       return true;
     }
   }
