@@ -32,3 +32,20 @@ float* Batterie() {
 
   return Output;
 }
+
+
+
+
+// Update LCD display
+void Update(String newDisplay[3]) {            // Cmd Lcd, affichage du mode ,la tension et niv batterie 
+  lcd.clear();
+
+  lcd.setCursor(0, 0);
+  lcd.print(newDisplay[0]);                      
+
+  lcd.setCursor(0, 1);
+  lcd.print(newDisplay[1]);
+
+  lcd.setCursor(11, 1);
+  lcd.print(newDisplay[2]);
+}
