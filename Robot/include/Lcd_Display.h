@@ -27,7 +27,7 @@ float* Batterie() {
   static float Output[2] = {};
   const float Tension = map(analogRead(BatteryPin), 0, 1023, 0, 500);
   const float ChargeLevel = map(Tension, 0, 500, 0, 10000);                              //Conversion des entrées analogiques , valeur tension et baterrie
-   Output[0] = Tension / 100;
+  Output[0] = Tension / 100;
   Output[1] = ChargeLevel / 100;
 
   return Output;
