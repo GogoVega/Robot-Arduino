@@ -72,3 +72,25 @@ boolean CheckChange(String oldDisplay[3], String newDisplay[3]) {  // Vérificat
   return change;
 }
 
+
+// Gestion du LCD
+void Display() {    // fonction princiaple qui appel tt les autres 
+  static String oldDisplay[3] = {}, newDisplay[3] = {}; 
+  if (digitalRead(AutoPin)) {
+    newDisplay[0] = "MODE AUTO";    // vérifie si on st dans le mode auto sinn il cherche etat rfid
+  } else {
+    newDisplay[0] = LCDState();   
+  }
+
+  // Chaque seconde
+  if (Flag == 1) {
+    const double* Values = Batterie();              //Affichage tension et % batterie
+    newDisplay[1] = String(Values[1]) + "%";
+    newDisplay[2] = String(Values[0]) + "V";
+  }
+ // Si changement => Update LCD
+  if (CheckChange(oldDisplay, newDisplay)) {
+    Update(newDisplay);
+  }
+}
+
