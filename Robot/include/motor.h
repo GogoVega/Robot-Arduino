@@ -61,7 +61,7 @@ void WriteSpeeds(int leftSpeed, int rightSpeed) {
   // Si marche arrière
   if (leftSpeed <= -limitSpeed && rightSpeed <= -limitSpeed) {
     // Feux marche arrière
-    digitalWrite(LEDReversePin, HIGH);
+    Backlights(1);
 
     // Buzzer marche arrière
     if (Flag == 1) {
@@ -69,7 +69,7 @@ void WriteSpeeds(int leftSpeed, int rightSpeed) {
     }
   } else {
     // Feux marche arrière OFF
-    digitalWrite(LEDReversePin, LOW);
+    Backlights(0);
   }
 }
 
