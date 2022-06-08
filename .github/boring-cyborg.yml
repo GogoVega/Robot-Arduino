@@ -1,0 +1,50 @@
+##### Labeler ##################################################
+labelPRBasedOnFilePath:
+    ############################################################
+    #  Top Level Labels
+    ############################################################
+    repo:
+        - ./*
+
+    ############################################################
+    #  Robot
+    ############################################################
+    robot:
+        - Robot/*
+
+    ############################################################
+    #  Telecommande
+    ############################################################
+    telecommande:
+        - Telecommande/*
+
+    ############################################################
+    #  Development Items
+    ############################################################
+    GitHub:
+        - .github
+
+    workflows:
+        - .github/workflows/*
+
+    ############################################################
+    #  Source Code
+    ############################################################
+    include:
+        - Robot/include/*
+        - Telecommande/include/*
+
+    lib:
+        - Robot/lib/*
+        - Telecommande/lib/*
+
+    src:
+        - Robot/src/*
+        - Telecommande/src/*
+
+##### Greetings ################################################
+firstPRWelcomeComment: >
+  Thanks for opening this pull request! Please check out our contributing guidelines.
+
+firstPRMergeComment: >
+  Awesome work, congrats on your first merged pull request!
