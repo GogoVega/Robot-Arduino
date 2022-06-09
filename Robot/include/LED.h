@@ -22,12 +22,13 @@ void Alert(uint32_t color) {
 int Blinking(uint32_t color, int num, int actual) {
   static int sens = 1;
 
+
   // INIT
   if (actual == 0) {
     sens = 1;
   }
-  
-   if (sens == 1) {
+
+  if (sens == 1) {
     if (actual < num) {
       strip.setPixelColor(actual, color);
       strip.show();
@@ -40,4 +41,11 @@ int Blinking(uint32_t color, int num, int actual) {
       strip.setPixelColor(actual, strip.Color(0, 0, 0));
       strip.show();
       actual--;
+    } else {
+      sens = 1;
+    }
+  }
+
+  return actual;
+}
  
