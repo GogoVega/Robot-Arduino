@@ -98,3 +98,12 @@ void Headlights() {
     }
   }
 }
+
+// Eclairage démarrage du robot
+void StartUp(uint32_t color, int wait) {
+  for(int i = 0; i < NUMPIXELS; i++) {
+    strip.setPixelColor(i, color);
+    strip.show();
+    delay(wait);
+  }
+}
