@@ -18,3 +18,10 @@ void Alert(uint32_t color) {
   }
 }
 
+// Clignotement
+int Blinking(uint32_t color, int num, int actual) {
+  static int sens = 1;
+
+  // INIT
+  if (actual == 0) {
+    sens = 0
