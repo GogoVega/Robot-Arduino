@@ -47,3 +47,24 @@ int Blinking(uint32_t color, int num, int actual) {
 
   return actual;
 }
+
+// Feux marche arrière
+void Backlights(boolean state) {
+  static boolean oldState;
+  uint32_t color;
+
+  if (state != oldState) {
+    switch (state) {
+      case 0:
+        color = strip.Color(255, 255, 255);
+        break;
+      case 1:
+        color = strip.Color(0, 0, 0);
+        break;
+    }
+
+    strip.setPixelColor(1, color);
+    strip.setPixelColor(3, color);
+    oldState = state;
+  }
+}
