@@ -24,4 +24,5 @@ int Blinking(uint32_t color, int num, int actual) {
 
   // INIT
   if (actual == 0) {
-    sens = 0
+    sens = 1;
+  }
