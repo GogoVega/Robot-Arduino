@@ -68,3 +68,33 @@ void Backlights(boolean state) {
     oldState = state;
   }
 }
+
+// Feux de croisement
+void Headlights() {
+  const int address[4] = {0, 4, 10, 14};
+  static boolean oldState;
+
+  if (!oldState) {
+    if (digitalRead(AutoPin) || data.RFID_State == 1) {
+      strip.clear();
+
+      for(int i = 0; i < 4; i++) {
+        uint32_t color;
+
+        if (i < 2)
+          color = strip.Color(255, 255, 255);
+        else
+          color = strip.Color(255, 0, 0);
+
+        strip.setPixelColor(address[i], color);
+      }
+
+      strip.show();
+      oldState = true;
+    }
+  } else {
+    if (data.RFID_State != 1) {
+      oldState = false;
+    }
+  }
+}
