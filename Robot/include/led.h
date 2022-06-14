@@ -43,6 +43,7 @@ void Alert(uint32_t color) {
     strip.show();
   } else if (Flag == 6 || Flag == 16) {
     strip.clear();
+    strip.show();
   }
 }
 
@@ -52,6 +53,8 @@ int Blinking(uint32_t color, int num, int actual) {
 
   // INIT
   if (!actual) {
+    strip.clear();
+    strip.show();
     sens = 1;
   }
 
@@ -106,6 +109,7 @@ void Headlights(boolean newState) {
   if (newState) {
     if (newState != oldState) {
       strip.clear();
+      strip.show();
 
       for (int i = 0; i < 4; i++) {
         uint32_t color;
