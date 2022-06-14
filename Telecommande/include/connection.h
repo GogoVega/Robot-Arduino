@@ -33,9 +33,6 @@
 
 SoftwareSerial Serial1(RX, TX);
 
-#elif defined(__AVR_ATmega2560__)
-// Arduino Mega 2560
-
 #else
 
 #error “Unsupported board selected!”

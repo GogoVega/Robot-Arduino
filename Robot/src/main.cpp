@@ -103,10 +103,10 @@ void loop() {
         byte* CodeRead = ReadRFID();
         Write = 1;
 
-        data.Code[0] = CodeRead[0];
-        data.Code[1] = CodeRead[1];
-        data.Code[2] = CodeRead[2];
-        data.Code[3] = CodeRead[3];
+        for (uint8_t i = 0; i < 4; i++) {
+          data.Code[i] = CodeRead[i];
+        }
+
         data.RFID_State = StateRFID(data.RFID_State);
       }
 

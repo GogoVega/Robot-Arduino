@@ -64,10 +64,9 @@ void loop() {
     // Si code RFID reçu
     if (data.Code[0] != 0) {
       data.RFID_State = RFID(data.RFID_State);
-      data.Code[0] = 0;
-      data.Code[1] = 0;
-      data.Code[2] = 0;
-      data.Code[3] = 0;
+      for (uint8_t i = 0; i < 4; i++) {
+        data.Code[i] = 0;
+      }
     }
 
     sendSize = SendTransfer.txObj(data, sendSize);
