@@ -1,5 +1,0 @@
-# RFID Card
-
-## Description
-
-This is a library for save RFID Code in EEPROM and check if the code matches.

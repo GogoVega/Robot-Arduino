@@ -23,41 +23,35 @@
 #ifndef __RFID_H
 #define __RFID_H
 
-#include <RFID_Card.h>
+#include <RFIDtoEEPROM.h>
 #include <type.h>
 
-RFID_Card myCard;
+RFIDtoEEPROM myCard;
+
+// Save new Card
+uint8_t NewCard() {
+  if (myCard.SaveCard(data.Code)) {
+    return 3;
+  }
+
+  return 9;
+}
 
 // Check Code RFID reçu:
-//
-// 0 Robot Verouillé
-// 1 Robot Déverrouillé
-// 2 Badgez nouvelle carte
-// 3 Nouvelle carte ajoutée
-// 4 Carte refusée
-// 5 Aucune carte ajoutée
-// 9 ERROR FLASH
-int CheckCode(byte Code[4]) {
-  // Uncomment for the first write to erase the memory
-  // myCard.clear();
-
+uint8_t CheckCode() {
   // Number of Cards saved
-  const int len = myCard.cardNumber();
+  const int len = myCard.CardNumber();
 
   if (!len) {
     if (digitalRead(DownPince)) {
       // Save the first Card
-      if (!myCard.saveCard(Code)) {
-        return 3;
-      }
-
-      return 9;
+      return NewCard();
     }
 
     return 5;
   }
 
-  if (myCard.cardCheck(Code)) {
+  if (myCard.CardCheck(data.Code)) {
     // Si déverrouillé => Verrouiller
     if (data.RFID_State == 1) {
       return 0;
@@ -74,24 +68,23 @@ int CheckCode(byte Code[4]) {
   return 4;
 }
 
-// Save new Card
-int NewCard(byte Code[4]) {
-  if (!myCard.saveCard(Code)) {
-    return 3;
-  }
-
-  return 9;
-}
-
 // Gestion RFID
+//
+// 0 Robot Verouillé
+// 1 Robot Déverrouillé
+// 2 Badgez nouvelle carte
+// 3 Nouvelle carte ajoutée
+// 4 Carte refusée
+// 5 Aucune carte ajoutée
+// 9 ERROR FLASH
 int RFID(int State) {
   switch (State) {
     case 0:
     case 1:
-      State = CheckCode(data.Code);
+      State = CheckCode();
       break;
     case 2:
-      State = NewCard(data.Code);
+      State = NewCard();
       break;
   }
 
