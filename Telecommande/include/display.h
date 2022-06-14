@@ -23,11 +23,10 @@
 #ifndef __DISPLAY_H
 #define __DISPLAY_H
 
-#include <Adafruit_I2CDevice.h>
-#include <Adafruit_SSD1306.h>
+#include <SSD1306AsciiWire.h>
 #include <type.h>
 
-Adafruit_SSD1306 oled(128, 64, &Wire);
+SSD1306AsciiWire oled;
 
 // Valeurs Batterie
 double* Batterie() {
@@ -88,7 +87,7 @@ String DisplayState() {
 
 // Gestion de l'OLED
 void Display() {
-  oled.clearDisplay();
+  oled.clear();
 
   oled.setCursor(30, 0);
   oled.print(Bluethooth());
@@ -106,8 +105,6 @@ void Display() {
 
   oled.setCursor(98, 7);
   oled.print(String(Values[1]) + "V");
-
-  oled.display();
 }
 
 #endif

@@ -31,12 +31,17 @@ void setup() {
   Serial1.begin(38400);
   SendTransfer.begin(Serial1);
 
+  // Uncomment for the first write to erase the memory
+  // myCard.clear();
+
   // OLED
   delay(250);
-  oled.begin(SSD1306_SWITCHCAPVCC, 0x3C);
-  oled.clearDisplay();
+  Wire.begin();
+  oled.begin(&Adafruit128x64, 0x3C, -1);
+  oled.setFont(Adafruit5x7);
+  oled.clear();
   oled.print("Demarrage...");
-  oled.display();
+
   delay(500);
 }
 
