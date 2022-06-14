@@ -43,6 +43,7 @@ void setup() {
   oled.print("Demarrage...");
 
   delay(500);
+  oled.clear();
 }
 
 void loop() {

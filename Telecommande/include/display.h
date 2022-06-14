@@ -41,53 +41,55 @@ double* Batterie() {
 
 // Etat liaison Bluethooth
 String Bluethooth() {
-  if (digitalRead(BluethoothPin)) {
-    return "  Connecte";
-  } else {
-    return "Connexion...";
-  }
+  if (digitalRead(BluethoothPin))
+    return F("  Connecte  ");
+
+  return F("Connexion...");
 }
 
 // Etat RFID
 String RFID_State() {
   switch (data.RFID_State) {
     case 0:
-      return "Robot: Verrouille";
+      return F("Robot: Verrouille     ");
     case 1:
-      return "Robot: Deverrouille";
+      return F("Robot: Deverrouille   ");
     case 2:
-      return "Badgez nouvelle carte";
+      return F("Badgez nouvelle carte ");
     case 3:
-      return "Nouvelle carte ajoutee";
+      return F("Nouvelle carte ajoutee");
     case 4:
-      return "Carte refusee!";
+      return F("Carte refusee!!!      ");
     case 5:
-      return "Aucune carte ajoutee!";
+      return F("Aucune carte ajoutee! ");
     case 9:
-      return "ERROR FLASH!!!";
+      return F("  !!! ERROR FLASH !!! ");
   }
 
-  return "ERROR DISPLAY";
+  return F("    ERROR DISPLAY     ");
 }
 
 // Etat Pince et Distance
 String DisplayState() {
   if (data.Distance > 20 || data.Distance == 0) {
     if (data.BP_OC == 1) {
-      return "Pince: Ouverture";
+      return F("Pince: Ouverture");
     } else if (data.BP_OC == 2) {
-      return "Pince: Fermeture";
-    } else {
-      return "Pince: Arret";
+      return F("Pince: Fermeture");
     }
-  } else {
-    return "Distance: " + String(data.Distance) + " cm";
+
+    return F("Pince: Arret");
   }
+
+  return "Distance: " + String(data.Distance) + " cm";
 }
 
 // Gestion de l'OLED
 void Display() {
-  oled.clear();
+  static uint8_t Flag = 0;
+
+  if (++Flag == 20)
+    Flag = 0;
 
   oled.setCursor(30, 0);
   oled.print(Bluethooth());
@@ -98,13 +100,15 @@ void Display() {
   oled.setCursor(0, 5);
   oled.print(RFID_State());
 
-  const double* Values = Batterie();
+  if (Flag == 1) {
+    const double* Values = Batterie();
 
-  oled.setCursor(0, 7);
-  oled.print(String(Values[0]) + "%");
+    oled.setCursor(0, 7);
+    oled.print(String(Values[0]) + "%");
 
-  oled.setCursor(98, 7);
-  oled.print(String(Values[1]) + "V");
+    oled.setCursor(98, 7);
+    oled.print(String(Values[1]) + "V");
+  }
 }
 
 #endif
