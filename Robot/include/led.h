@@ -26,6 +26,10 @@
 #include <Adafruit_NeoPixel.h>
 #include <type.h>
 
+// LEDs State
+#define AUTO_MODE 10
+#define DECONNECTE 8
+
 Adafruit_NeoPixel strip(NUMPIXELS, LEDPIN, NEO_GRB + NEO_KHZ800);
 
 // Alerte lumineuse
@@ -47,7 +51,7 @@ int Blinking(uint32_t color, int num, int actual) {
   static int sens = 1;
 
   // INIT
-  if (actual == 0) {
+  if (!actual) {
     sens = 1;
   }
 
@@ -74,12 +78,12 @@ int Blinking(uint32_t color, int num, int actual) {
 }
 
 // Feux marche arrière
-void Backlights(boolean state) {
+void Backlights(boolean newState) {
   static boolean oldState;
   uint32_t color;
 
-  if (state != oldState) {
-    switch (state) {
+  if (newState != oldState) {
+    switch (newState) {
       case 0:
         color = strip.Color(255, 255, 255);
         break;
@@ -90,17 +94,17 @@ void Backlights(boolean state) {
 
     strip.setPixelColor(1, color);
     strip.setPixelColor(3, color);
-    oldState = state;
+    oldState = newState;
   }
 }
 
 // Feux de croisement
-void Headlights() {
-  const int address[4] = {0, 4, 10, 14};
+void Headlights(boolean newState) {
+  const int pixelAddress[4] = {0, 4, 10, 14};
   static boolean oldState;
 
-  if (!oldState) {
-    if (digitalRead(AutoPin) || data.RFID_State == 1) {
+  if (newState) {
+    if (newState != oldState) {
       strip.clear();
 
       for (int i = 0; i < 4; i++) {
@@ -111,16 +115,14 @@ void Headlights() {
         else
           color = strip.Color(255, 0, 0);
 
-        strip.setPixelColor(address[i], color);
+        strip.setPixelColor(pixelAddress[i], color);
       }
 
       strip.show();
       oldState = true;
     }
   } else {
-    if (data.RFID_State != 1) {
-      oldState = false;
-    }
+    oldState = false;
   }
 }
 
@@ -133,39 +135,52 @@ void StartUp(uint32_t color, int wait) {
   }
 }
 
+// Etat des LEDs
+int BlinkState() {
+  if (digitalRead(AutoPin)) {
+    return AUTO_MODE;
+  } else if (!digitalRead(BluethoothPin)) {
+    return DECONNECTE;
+  } else {
+    return data.RFID_State;
+  }
+}
+
 // Gestion du strip LEDs
 void Blink() {
   static int actualPixel = 0;
+  static int oldState;
+  int newState = BlinkState();
 
-  Headlights();
-
-  if (!digitalRead(AutoPin)) {
-    if (!digitalRead(BluethoothPin)) {
-      actualPixel = Blinking(strip.Color(255, 165, 0), NUMPIXELS, actualPixel);
-    } else {
-      switch (data.RFID_State) {
-        case 0:
-          actualPixel =
-              Blinking(strip.Color(0, 0, 255), NUMPIXELS, actualPixel);
-          break;
-        case 2:
-          Alert(strip.Color(255, 165, 0));  // Orange
-          break;
-        case 3:
-          Alert(strip.Color(0, 255, 0));  // Vert
-          break;
-        case 4:
-        case 5:
-          Alert(strip.Color(255, 0, 0));  // Rouge
-          break;
-      }
-
-      if (data.RFID_State) {
-        actualPixel = 0;
-      }
-    }
-  } else {
+  // INIT
+  if (newState != oldState) {
+    if (newState != 1 && newState != 10)
+      Headlights(false);
     actualPixel = 0;
+    oldState = newState;
+  }
+
+  switch (newState) {
+    case 0:
+      actualPixel = Blinking(strip.Color(0, 0, 255), NUMPIXELS, actualPixel);
+      break;
+    case 1:
+    case 10:
+      Headlights(true);
+      break;
+    case 2:
+      Alert(strip.Color(255, 165, 0));  // Orange
+      break;
+    case 3:
+      Alert(strip.Color(0, 255, 0));  // Vert
+      break;
+    case 4:
+    case 5:
+      Alert(strip.Color(255, 0, 0));  // Rouge
+      break;
+    case 8:
+      actualPixel = Blinking(strip.Color(255, 165, 0), NUMPIXELS, actualPixel);
+      break;
   }
 }
 

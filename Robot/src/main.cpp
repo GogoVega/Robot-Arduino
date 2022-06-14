@@ -63,6 +63,7 @@ void setup() {
 }
 
 void loop() {
+  unsigned long Time = millis();
   int Write = 0;
 
   // Tempo signalisation
@@ -128,5 +129,6 @@ void loop() {
     }
   }
 
-  delay(50);
+  while (millis() < Time + 50) {
+  }
 }
