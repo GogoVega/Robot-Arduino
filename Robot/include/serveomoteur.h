@@ -20,3 +20,4 @@ void setup()
   monServomoteur.write(0);
 
   Serial.begin(9600);
+}
