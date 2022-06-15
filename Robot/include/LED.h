@@ -98,3 +98,50 @@ void Headlights() {
     }
   }
 }
+
+
+// Eclairage démarrage du robot
+void StartUp(uint32_t color, int wait) {
+  for(int i = 0; i < NUMPIXELS; i++) {
+    strip.setPixelColor(i, color);
+    strip.show();
+    delay(wait);
+  }
+}
+
+// Gestion du strip LEDs
+void Blink() {
+  static int actualPixel = 0;
+
+  Headlights();
+
+  if (!digitalRead(AutoPin)) {
+    if (!digitalRead(BluethoothPin)) {
+      actualPixel = Blinking(strip.Color(255, 165, 0), NUMPIXELS, actualPixel);
+    } else {
+      switch (data.RFID_State) {
+        case 0:
+          actualPixel = Blinking(strip.Color(0, 0, 255), NUMPIXELS, actualPixel);
+          break;
+        case 2:
+          Alert(strip.Color(255, 165, 0)); // Orange
+          break;
+        case 3:
+          Alert(strip.Color(0, 255, 0));   // Vert
+          break;
+        case 4:
+        case 5:
+          Alert(strip.Color(255, 0, 0));   // Rouge
+          break;
+      }
+
+      if (data.RFID_State) {
+        actualPixel = 0;
+      }
+    }
+  } else {
+    actualPixel = 0;
+  }
+}
+
+```
