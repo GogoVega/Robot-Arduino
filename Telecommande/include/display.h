@@ -29,14 +29,11 @@
 SSD1306AsciiWire oled;
 
 // Valeurs Batterie
-double* Batterie() {
-  static double Output[2] = {};
-  const float Tension = map(analogRead(BatteryPin), 0, 1023, 0, 500);
-  const float ChargeLevel = map(Tension, 0, 500, 0, 10000);
-  Output[0] = ChargeLevel / 100;
-  Output[1] = Tension / 100;
+void Batterie(double* Values) {
+  const uint16_t pinRead = analogRead(BatteryPin);
 
-  return Output;
+  Values[0] = (float) (map(pinRead, 0, 1023, 0, 500)) / 100;
+  Values[1] = (float) (map(pinRead, 0, 1023, 0, 10000)) / 100;
 }
 
 // Etat liaison Bluethooth
@@ -101,7 +98,8 @@ void Display() {
   oled.print(RFID_State());
 
   if (Flag == 1) {
-    const double* Values = Batterie();
+    double Values[2] = {};
+    Batterie(Values);
 
     oled.setCursor(0, 7);
     oled.print(String(Values[0]) + "%");

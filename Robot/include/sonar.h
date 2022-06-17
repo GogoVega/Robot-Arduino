@@ -28,21 +28,19 @@
 
 Ultrasonic sonar(Trig, Echo);
 
-int Sonar() {
+uint16_t Sonar() {
   // distance en cm
-  const int minDistance = 5, maxDistance = 400;
-  const int distance = sonar.read();
+  const uint16_t minDistance = 5, maxDistance = 400;
+  const uint16_t distance = sonar.read();
 
   // Buzzer distance trop courte
-  if (distance < minDistance) {
+  if (distance < minDistance)
     tone(BuzzerPin, 600, 50);
-  }
 
-  if (distance < maxDistance) {
+  if (distance < maxDistance)
     return distance;
-  } else {
-    return maxDistance;
-  }
+
+  return maxDistance;
 }
 
 #endif

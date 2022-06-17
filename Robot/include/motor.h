@@ -41,9 +41,9 @@ Motor SenseRotation(int speed) {
     return {HIGH, LOW, speed};
   } else if (speed <= -limitSpeed) {
     return {LOW, HIGH, abs(speed)};
-  } else {
-    return {LOW, LOW, 0};
   }
+
+  return {LOW, LOW, 0};
 }
 
 void WriteSpeeds(int leftSpeed, int rightSpeed) {

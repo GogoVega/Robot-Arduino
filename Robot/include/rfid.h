@@ -38,7 +38,7 @@ MFRC522 rfid(SDA_RFID, RST_RFID);
 // 4 Carte refusée
 // 5 Aucune carte ajoutée
 // 9 ERROR FLASH
-int StateRFID(int State) {
+uint8_t StateRFID(uint8_t State) {
   switch (State) {
     case 3:
     case 4:
@@ -55,7 +55,7 @@ byte* ReadRFID() {
   static byte Response[4] = {};
 
   if (rfid.PICC_ReadCardSerial()) {
-    for (int i = 0; i < 4; i++) {
+    for (uint8_t i = 0; i < 4; i++) {
       Response[i] = rfid.uid.uidByte[i];
     }
 

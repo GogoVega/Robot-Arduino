@@ -33,10 +33,6 @@
 
 SoftwareSerial Serial1(RX, TX);
 
-#else
-
-#error “Unsupported board selected!”
-
 #endif
 
 #endif

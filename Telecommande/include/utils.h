@@ -29,7 +29,7 @@
 #define JoystickValue(pin) (map(analogRead(pin), 0, 1023, -255, 255))
 
 // CMD Moter-Descendre la pince
-int EtatBP(int pin_1, int pin_2) {
+uint8_t EtatBP(uint8_t pin_1, uint8_t pin_2) {
   const int BP1 = digitalRead(pin_1);
   const int BP2 = digitalRead(pin_2);
 

@@ -30,9 +30,8 @@ RFIDtoEEPROM myCard;
 
 // Save new Card
 uint8_t NewCard() {
-  if (myCard.SaveCard(data.Code)) {
+  if (myCard.SaveCard(data.Code))
     return 3;
-  }
 
   return 9;
 }
@@ -40,27 +39,24 @@ uint8_t NewCard() {
 // Check Code RFID reçu:
 uint8_t CheckCode() {
   // Number of Cards saved
-  const int len = myCard.CardNumber();
+  const uint8_t len = myCard.CardNumber();
 
   if (!len) {
-    if (digitalRead(DownPince)) {
+    if (digitalRead(DownPince))
       // Save the first Card
       return NewCard();
-    }
 
     return 5;
   }
 
   if (myCard.CardCheck(data.Code)) {
     // Si déverrouillé => Verrouiller
-    if (data.RFID_State == 1) {
+    if (data.RFID_State == 1)
       return 0;
-    }
 
     // Si demande enregistrement
-    if (digitalRead(DownPince)) {
+    if (digitalRead(DownPince))
       return 2;
-    }
 
     return 1;
   }
@@ -77,7 +73,7 @@ uint8_t CheckCode() {
 // 4 Carte refusée
 // 5 Aucune carte ajoutée
 // 9 ERROR FLASH
-int RFID(int State) {
+uint8_t RFID(uint8_t State) {
   switch (State) {
     case 0:
     case 1:

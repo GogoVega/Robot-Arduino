@@ -30,7 +30,7 @@ Servo servo_OC;
 Servo servo_UD;
 
 // Renvoie l'angle voulu
-int servoWrite(int angles, int state) {
+uint8_t servoWrite(uint8_t angles, uint8_t state) {
   if (state == 1 && angles < 180) {
     angles++;
   } else if (state == 2 && angles > 0) {
@@ -42,7 +42,7 @@ int servoWrite(int angles, int state) {
 
 // Gestion servomoteurs
 void servoGo() {
-  static int angles[2] = {0, 0};
+  static uint8_t angles[2] = {0, 0};
 
   angles[0] = servoWrite(angles[0], data.BP_OC);
   angles[1] = servoWrite(angles[1], data.BP_UD);

@@ -34,7 +34,7 @@ Adafruit_NeoPixel strip(NUMPIXELS, LEDPIN, NEO_GRB + NEO_KHZ800);
 
 // Alerte lumineuse
 void Alert(uint32_t color) {
-  for (int i = 0; i < NUMPIXELS; i++) {
+  for (uint8_t i = 0; i < NUMPIXELS; i++) {
     strip.setPixelColor(i, color);
   }
 
@@ -48,8 +48,8 @@ void Alert(uint32_t color) {
 }
 
 // Clignotement
-int Blinking(uint32_t color, int num, int actual) {
-  static int sens = 1;
+uint8_t Blinking(uint32_t color, uint8_t num, uint8_t actual) {
+  static int8_t sens = 1;
 
   // INIT
   if (!actual) {
@@ -103,7 +103,7 @@ void Backlights(boolean newState) {
 
 // Feux de croisement
 void Headlights(boolean newState) {
-  const int pixelAddress[4] = {0, 4, 10, 14};
+  const uint8_t pixelAddress[4] = {0, 4, 10, 14};
   static boolean oldState;
 
   if (newState) {
@@ -111,7 +111,7 @@ void Headlights(boolean newState) {
       strip.clear();
       strip.show();
 
-      for (int i = 0; i < 4; i++) {
+      for (uint8_t i = 0; i < 4; i++) {
         uint32_t color;
 
         if (i < 2)
@@ -131,8 +131,8 @@ void Headlights(boolean newState) {
 }
 
 // Eclairage démarrage du robot
-void StartUp(uint32_t color, int wait) {
-  for (int i = 0; i < NUMPIXELS; i++) {
+void StartUp(uint32_t color, uint8_t wait) {
+  for (uint8_t i = 0; i < NUMPIXELS; i++) {
     strip.setPixelColor(i, color);
     strip.show();
     delay(wait);
@@ -140,7 +140,7 @@ void StartUp(uint32_t color, int wait) {
 }
 
 // Etat des LEDs
-int BlinkState() {
+uint8_t BlinkState() {
   if (digitalRead(AutoPin)) {
     return AUTO_MODE;
   } else if (!digitalRead(BluethoothPin)) {
@@ -152,9 +152,8 @@ int BlinkState() {
 
 // Gestion du strip LEDs
 void Blink() {
-  static int actualPixel = 0;
-  static int oldState;
-  int newState = BlinkState();
+  static uint8_t actualPixel = 0, oldState;
+  uint8_t newState = BlinkState();
 
   // INIT
   if (newState != oldState) {

@@ -64,7 +64,7 @@ void setup() {
 
 void loop() {
   unsigned long Time = millis();
-  int Write = 0;
+  uint8_t Write = 0;
 
   // Tempo signalisation
   if (++Flag == 20)
@@ -111,7 +111,7 @@ void loop() {
       }
 
       // Envoie distance si < 25cm
-      int distance = Sonar();
+      uint16_t distance = Sonar();
       if (distance < 25 && distance != 0) {
         Write = 1;
         data.Distance = distance;

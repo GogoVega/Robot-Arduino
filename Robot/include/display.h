@@ -30,14 +30,11 @@
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 
 // Valeurs Batterie
-double* Batterie() {
-  static double Output[2] = {};
-  const float Tension = map(analogRead(BatteryPin), 0, 1023, 0, 500);
-  const float ChargeLevel = map(Tension, 0, 500, 0, 10000);
-  Output[0] = Tension / 100;
-  Output[1] = ChargeLevel / 100;
+void Batterie(double* Values) {
+  const uint16_t pinRead = analogRead(BatteryPin);
 
-  return Output;
+  Values[0] = (float) (map(pinRead, 0, 1023, 0, 500)) / 100;
+  Values[1] = (float) (map(pinRead, 0, 1023, 0, 10000)) / 100;
 }
 
 // Valeurs Bluethooth et RFID
@@ -69,7 +66,7 @@ String LCDState() {
 }
 
 // Vérifie si changement
-boolean CheckChange(String oldDisplay[3], String newDisplay[3]) {
+boolean CheckChange(String* oldDisplay, String* newDisplay) {
   boolean change = 0;
 
   if (newDisplay[0] != oldDisplay[0]) {
@@ -89,7 +86,7 @@ boolean CheckChange(String oldDisplay[3], String newDisplay[3]) {
 }
 
 // Update LCD display
-void Update(String newDisplay[3]) {
+void Update(String* newDisplay) {
   lcd.clear();
 
   lcd.setCursor(0, 0);
@@ -110,7 +107,8 @@ void Display() {
 
   // Chaque seconde
   if (Flag == 1) {
-    const double* Values = Batterie();
+    double Values[2] = {};
+    Batterie(Values);
     newDisplay[1] = String(Values[1]) + "%";
     newDisplay[2] = String(Values[0]) + "V";
   }
