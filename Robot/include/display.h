@@ -33,8 +33,8 @@ LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 void Batterie(double* Values) {
   const uint16_t pinRead = analogRead(BatteryPin);
 
-  Values[0] = (float) (map(pinRead, 0, 1023, 0, 500)) / 100;
-  Values[1] = (float) (map(pinRead, 0, 1023, 0, 10000)) / 100;
+  Values[0] = (float)(map(pinRead, 0, 1023, 0, 500)) / 100;
+  Values[1] = (float)(map(pinRead, 0, 1023, 0, 10000)) / 100;
 }
 
 // Valeurs Bluethooth et RFID

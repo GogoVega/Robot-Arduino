@@ -32,8 +32,8 @@ SSD1306AsciiWire oled;
 void Batterie(double* Values) {
   const uint16_t pinRead = analogRead(BatteryPin);
 
-  Values[0] = (float) (map(pinRead, 0, 1023, 0, 500)) / 100;
-  Values[1] = (float) (map(pinRead, 0, 1023, 0, 10000)) / 100;
+  Values[0] = (float)(map(pinRead, 0, 1023, 0, 500)) / 100;
+  Values[1] = (float)(map(pinRead, 0, 1023, 0, 10000)) / 100;
 }
 
 // Etat liaison Bluethooth
