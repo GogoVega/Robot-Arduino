@@ -1,8 +1,6 @@
 name: Linting Check
 
-on:
-  push:
-  pull_request:
+on: push
 
 jobs:
   build:
@@ -11,11 +9,21 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Check for linting errors
+      - name: Check for Linting Errors
         uses: DoozyX/clang-format-lint-action@v0.13
         with:
-          source: '.'
-          exclude: 'none'
-          extensions: 'cpp,h'
           clangFormatVersion: 13
+          extensions: 'cpp,h'
+          inplace: ${{ github.ref != 'refs/heads/master' }}
           style: chromium
+
+      - name: Committing Clang-format Changes
+        uses: stefanzweifel/git-auto-commit-action@v4
+        if: github.ref != 'refs/heads/master'
+        with:
+          commit_author: GitHub Actions <actions@github.com>
+          commit_message: 'fix: Linting Issues'
+          commit_options: '--no-verify --signoff'
+          commit_user_name: GitHub Actions
+          commit_user_email: actions@github.com
+          disable_globbing: true
