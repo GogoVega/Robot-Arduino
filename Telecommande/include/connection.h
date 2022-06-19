@@ -20,35 +20,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#ifndef __SERVOMOTOR_H
-#define __SERVOMOTOR_H
+#ifndef __CONNECTION_H
+#define __CONNECTION_H
 
-#include <Servo.h>
-#include <type.h>
+#if defined(__AVR_ATmega328__) || defined(__AVR_ATmega328P__)
+// Arduino NANO OR UNO
 
-Servo servo_OC;
-Servo servo_UD;
+#include <SoftwareSerial.h>
 
-// Renvoie l'angle voulu
-uint8_t servoWrite(uint8_t angles, uint8_t state) {
-  if (state == 1 && angles < 180) {
-    angles++;
-  } else if (state == 2 && angles > 0) {
-    angles--;
-  }
+#define RX 11
+#define TX 12
 
-  return angles;
-}
+SoftwareSerial Serial1(RX, TX);
 
-// Gestion servomoteurs
-void servoGo() {
-  static uint8_t angles[2] = {0, 0};
-
-  angles[0] = servoWrite(angles[0], data.BP_OC);
-  angles[1] = servoWrite(angles[1], data.BP_UD);
-
-  servo_OC.write(angles[0]);
-  servo_UD.write(angles[1]);
-}
+#endif
 
 #endif

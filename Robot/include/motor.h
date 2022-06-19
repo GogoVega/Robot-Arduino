@@ -29,29 +29,29 @@
 #define minSpeed 60                 // Vitesse minimale de démarrage du moteur
 #define limitSpeed (minSpeed - 10)  // Vitesse minimale (précision)
 
-struct Sense {
+struct Motor {
   byte DO1;
   byte DO2;
   int AO;
-} dataMotor;
+};
 
 // Avant - Arrière - Arrêt
-Sense SenseRotation(int speed) {
+Motor SenseRotation(int speed) {
   if (speed >= limitSpeed) {
     return {HIGH, LOW, speed};
   } else if (speed <= -limitSpeed) {
     return {LOW, HIGH, abs(speed)};
-  } else {
-    return {LOW, LOW, 0};
   }
+
+  return {LOW, LOW, 0};
 }
 
 void WriteSpeeds(int leftSpeed, int rightSpeed) {
-  Sense left = SenseRotation(leftSpeed);
+  Motor left = SenseRotation(leftSpeed);
   digitalWrite(borneIN1, left.DO1);
   digitalWrite(borneIN2, left.DO2);
 
-  Sense right = SenseRotation(rightSpeed);
+  Motor right = SenseRotation(rightSpeed);
   digitalWrite(borneIN3, right.DO1);
   digitalWrite(borneIN4, right.DO2);
 

@@ -64,7 +64,7 @@ void setup() {
 
 void loop() {
   unsigned long Time = millis();
-  int Write = 0;
+  uint8_t Write = 0;
 
   // Tempo signalisation
   if (++Flag == 20)
@@ -103,15 +103,15 @@ void loop() {
         byte* CodeRead = ReadRFID();
         Write = 1;
 
-        data.Code[0] = CodeRead[0];
-        data.Code[1] = CodeRead[1];
-        data.Code[2] = CodeRead[2];
-        data.Code[3] = CodeRead[3];
+        for (uint8_t i = 0; i < 4; i++) {
+          data.Code[i] = CodeRead[i];
+        }
+
         data.RFID_State = StateRFID(data.RFID_State);
       }
 
       // Envoie distance si < 25cm
-      int distance = Sonar();
+      uint16_t distance = Sonar();
       if (distance < 25 && distance != 0) {
         Write = 1;
         data.Distance = distance;

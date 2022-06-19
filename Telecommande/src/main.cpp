@@ -21,6 +21,7 @@
 // SOFTWARE.
 
 #include <Arduino.h>
+#include <connection.h>
 #include <display.h>
 #include <rfid.h>
 #include <type.h>
@@ -30,13 +31,19 @@ void setup() {
   Serial1.begin(38400);
   SendTransfer.begin(Serial1);
 
+  // Uncomment for the first write to erase the memory
+  // myCard.clear();
+
   // OLED
   delay(250);
-  oled.init();
+  Wire.begin();
+  oled.begin(&Adafruit128x64, 0x3C, -1);
+  oled.setFont(Adafruit5x7);
   oled.clear();
   oled.print("Demarrage...");
-  oled.update();
+
   delay(500);
+  oled.clear();
 }
 
 void loop() {
@@ -63,10 +70,9 @@ void loop() {
     // Si code RFID reçu
     if (data.Code[0] != 0) {
       data.RFID_State = RFID(data.RFID_State);
-      data.Code[0] = 0;
-      data.Code[1] = 0;
-      data.Code[2] = 0;
-      data.Code[3] = 0;
+      for (uint8_t i = 0; i < 4; i++) {
+        data.Code[i] = 0;
+      }
     }
 
     sendSize = SendTransfer.txObj(data, sendSize);

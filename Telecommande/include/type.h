@@ -47,11 +47,11 @@ SerialTransfer SendTransfer;
 struct STRUCT {
   int Axe_X;
   int Axe_Y;
-  int BP_OC;
-  int BP_UD;
+  uint8_t BP_OC;
+  uint8_t BP_UD;
   byte Code[4];
-  int RFID_State;
-  int Distance;
+  uint8_t RFID_State;
+  uint16_t Distance;
 } data;
 
 #endif

@@ -29,7 +29,7 @@
 
 // Distance minimale avant obstacle
 // Incréméntée si le robot recule
-int limitDistance = 10;
+uint8_t limitDistance = 10;
 
 // Choix d'évitement d'obstacle:
 //
@@ -37,17 +37,17 @@ int limitDistance = 10;
 // 1 Tourner à droite
 // 2 Revenir position initiale
 // 3 Marche arrière
-float avoidanceChoice(float time, int choice) {
-  const int minDistance = 5;
-  const int maxDistance = 20;
-  const int backDistance = 15;
+float avoidanceChoice(float time, uint8_t choice) {
+  const uint8_t minDistance = 5;
+  const uint8_t maxDistance = 20;
+  const uint8_t backDistance = 15;
   const float quartTour = 4.40;
 
   switch (choice) {
     case 0:
       WriteSpeeds(60, -60);
       while (time < quartTour) {
-        int distance = sonar.read();
+        const uint16_t distance = sonar.read();
 
         if (distance > maxDistance && time > (quartTour / 2)) {
           limitDistance = 10;
@@ -65,7 +65,7 @@ float avoidanceChoice(float time, int choice) {
     case 1:
       WriteSpeeds(-60, 60);
       while (time > -quartTour) {
-        int distance = sonar.read();
+        const uint16_t distance = sonar.read();
 
         if (distance > maxDistance && time < (quartTour / 2)) {
           limitDistance = 10;
@@ -91,7 +91,7 @@ float avoidanceChoice(float time, int choice) {
 
     case 3:
       WriteSpeeds(-60, -60);
-      while (int(sonar.read()) < (maxDistance + backDistance)) {
+      while (uint16_t(sonar.read()) < (maxDistance + backDistance)) {
       }
       limitDistance += backDistance;
       break;
@@ -103,12 +103,12 @@ float avoidanceChoice(float time, int choice) {
 // Mode de fonctionnement automatique
 // avec évitement d'obstacle
 void automatic() {
-  int choice = 0;
+  uint8_t choice = 0;
   float TimeRotation = 0;
 
   WriteSpeeds(255, 255);
 
-  while (int(sonar.read()) < limitDistance) {
+  while (uint16_t(sonar.read()) < limitDistance) {
     if (choice > 3) {
       choice = 0;
     }

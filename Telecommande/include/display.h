@@ -23,83 +23,90 @@
 #ifndef __DISPLAY_H
 #define __DISPLAY_H
 
-#include <Adafruit_I2CDevice.h>
-#include <GyverOLED.h>
+#include <SSD1306AsciiWire.h>
 #include <type.h>
 
-GyverOLED<SSH1106_128x64> oled(0x3C);
+SSD1306AsciiWire oled;
 
 // Valeurs Batterie
-double* Batterie() {
-  static double Output[2] = {};
-  const float Tension = map(analogRead(BatteryPin), 0, 1023, 0, 500);
-  const float ChargeLevel = map(Tension, 0, 500, 0, 10000);
-  Output[0] = ChargeLevel / 100;
-  Output[1] = Tension / 100;
+void Batterie(double* Values) {
+  const uint16_t pinRead = analogRead(BatteryPin);
 
-  return Output;
+  Values[0] = (float)(map(pinRead, 0, 1023, 0, 500)) / 100;
+  Values[1] = (float)(map(pinRead, 0, 1023, 0, 10000)) / 100;
 }
 
 // Etat liaison Bluethooth
 String Bluethooth() {
-  if (digitalRead(BluethoothPin)) {
-    return "  Connecte";
-  } else {
-    return "Connexion...";
+  if (digitalRead(BluethoothPin))
+    return F("  Connecte  ");
+
+  return F("Connexion...");
+}
+
+// Etat RFID
+String RFID_State() {
+  switch (data.RFID_State) {
+    case 0:
+      return F("Robot: Verrouille     ");
+    case 1:
+      return F("Robot: Deverrouille   ");
+    case 2:
+      return F("Badgez nouvelle carte ");
+    case 3:
+      return F("Nouvelle carte ajoutee");
+    case 4:
+      return F("Carte refusee!!!      ");
+    case 5:
+      return F("Aucune carte ajoutee! ");
+    case 9:
+      return F("  !!! ERROR FLASH !!! ");
   }
+
+  return F("    ERROR DISPLAY     ");
+}
+
+// Etat Pince et Distance
+String DisplayState() {
+  if (data.Distance > 20 || data.Distance == 0) {
+    if (data.BP_OC == 1) {
+      return F("Pince: Ouverture");
+    } else if (data.BP_OC == 2) {
+      return F("Pince: Fermeture");
+    }
+
+    return F("Pince: Arret");
+  }
+
+  return "Distance: " + String(data.Distance) + " cm";
 }
 
 // Gestion de l'OLED
 void Display() {
-  oled.clear();
+  static uint8_t Flag = 0;
+
+  if (++Flag == 20)
+    Flag = 0;
 
   oled.setCursor(30, 0);
   oled.print(Bluethooth());
 
   oled.setCursor(0, 3);
-  if (data.Distance > 20 || data.Distance == 0) {
-    if (data.BP_OC == 1) {
-      oled.print("Pince: Ouverture");
-    } else if (data.BP_OC == 2) {
-      oled.print("Pince: Fermeture");
-    } else {
-      oled.print("Pince: Arret");
-    }
-  } else {
-    oled.print("Distance: " + String(data.Distance) + " cm");
-  }
+  oled.print(DisplayState());
 
   oled.setCursor(0, 5);
-  switch (data.RFID_State) {
-    case 0:
-      oled.print("Robot: Verrouille");
-      break;
-    case 1:
-      oled.print("Robot: Deverrouille");
-      break;
-    case 2:
-      oled.print("Badgez nouvelle carte");
-      break;
-    case 3:
-      oled.print("Nouvelle carte ajoutee");
-      break;
-    case 4:
-      oled.print("Carte refusee!");
-      break;
-    case 5:
-      oled.print("Aucune carte ajoutee!");
-      break;
+  oled.print(RFID_State());
+
+  if (Flag == 1) {
+    double Values[2] = {};
+    Batterie(Values);
+
+    oled.setCursor(0, 7);
+    oled.print(String(Values[0]) + "%");
+
+    oled.setCursor(98, 7);
+    oled.print(String(Values[1]) + "V");
   }
-
-  const double* Values = Batterie();
-
-  oled.setCursor(0, 7);
-  oled.print(String(Values[0]) + "%");
-
-  oled.setCursor(98, 7);
-  oled.print(String(Values[1]) + "V");
-
-  oled.update();
 }
 
 #endif

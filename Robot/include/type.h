@@ -78,14 +78,14 @@ extern const int rs = 22, en = 23, d4 = 24, d5 = 25, d6 = 26, d7 = 27;
 struct STRUCT {
   int Axe_X;
   int Axe_Y;
-  int BP_OC;
-  int BP_UD;
+  uint8_t BP_OC;
+  uint8_t BP_UD;
   byte Code[4];
-  int RFID_State;
-  int Distance;
+  uint8_t RFID_State;
+  uint16_t Distance;
 } data;
 
 // Tempos (50ms)
-int Flag = 0;
+uint8_t Flag = 0;
 
 #endif

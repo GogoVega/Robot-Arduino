@@ -26,12 +26,10 @@
 #include <type.h>
 
 // Mapping value for -255 to 255
-int JoystickValue(int pin) {
-  return map(analogRead(pin), 0, 1023, -255, 255);
-}
+#define JoystickValue(pin) (map(analogRead(pin), 0, 1023, -255, 255))
 
 // CMD Moter-Descendre la pince
-int EtatBP(int pin_1, int pin_2) {
+uint8_t EtatBP(uint8_t pin_1, uint8_t pin_2) {
   const int BP1 = digitalRead(pin_1);
   const int BP2 = digitalRead(pin_2);
 
@@ -41,9 +39,9 @@ int EtatBP(int pin_1, int pin_2) {
     return 1;
   } else if (BP2 && !BP1) {
     return 2;
-  } else {
-    return 0;
   }
+
+  return 0;
 }
 
 #endif
