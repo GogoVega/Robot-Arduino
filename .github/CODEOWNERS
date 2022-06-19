@@ -2,6 +2,6 @@
 *       @GogoVega
 
 # Permission by file type
-*.cpp   @GogoVega
-*.h     @GogoVega
+*.cpp   @GogoVega @DavideDiVenti
+*.h     @GogoVega @DavideDiVenti
 *.md    @GogoVega
