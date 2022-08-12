@@ -1,14 +1,14 @@
-# inclure  < LiquidCrystal.h >
+#inclure < LiquidCrystal.h>
 
-LCD LiquidCrystal (rs, en, d4, d5, d6, d7);
-
+LCD LiquidCrystal(rs, en, d4, d5, d6, d7);
 
 // Update LCD display
-void Update(String newDisplay[3]) {            // Cmd Lcd, affichage   le mode , tension et niv batterie 
+void Update(String newDisplay[3]) {  // Cmd Lcd, affichage   le mode , tension
+                                     // et niv batterie
   lcd.clear();
 
   lcd.setCursor(0, 0);
-  lcd.print(newDisplay[0]);                      
+  lcd.print(newDisplay[0]);
 
   lcd.setCursor(0, 1);
   lcd.print(newDisplay[1]);
@@ -17,15 +17,17 @@ void Update(String newDisplay[3]) {            // Cmd Lcd, affichage   le mode ,
   lcd.print(newDisplay[2]);
 }
 
-
 // Gestion du LCD
-void Display() {    // fonction princiaple qui appel tt les autres 
-  static String oldDisplay[3] = {}, newDisplay[3] = {};        // declare new tbl 3 el variable mm nom oslm                  
+void Display() {  // fonction princiaple qui appel tt les autres
+  static String oldDisplay[3] = {},
+                newDisplay[3] =
+                    {};  // declare new tbl 3 el variable mm nom oslm
 
   if (digitalRead(AutoPin)) {
-    newDisplay[0] = "MODE AUTO";    // vérifie si on st dans le mode auto sinn il cherche etat rfid
+    newDisplay[0] = "MODE AUTO";  // vérifie si on st dans le mode auto sinn il
+                                  // cherche etat rfid
   } else {
-    newDisplay[0] = LCDState();   
+    newDisplay[0] = LCDState();
   }
 
   // Chaque seconde
@@ -36,7 +38,9 @@ void Display() {    // fonction princiaple qui appel tt les autres
   }
 
   // Si changement => Update LCD
-  if (CheckChange(oldDisplay, newDisplay)) {    // mm valeur ? sinon fct update qui printe sur lcd
+  if (CheckChange(
+          oldDisplay,
+          newDisplay)) {  // mm valeur ? sinon fct update qui printe sur lcd
     Update(newDisplay);
   }
 }
