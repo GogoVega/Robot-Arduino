@@ -44,3 +44,23 @@ void Display() {  // fonction princiaple qui appel tt les autres
     Update(newDisplay);
   }
 }
+
+// Vérification si changement
+boolean CheckChange(String oldDisplay[3], String newDisplay[3]) {  // Vérification anciennes et nouvelles valeurs =?, oui : aucun changement , nn : egalisation x3   
+  boolean change = 0;
+
+  if (newDisplay[0] != oldDisplay[0]) {
+    oldDisplay[0] = newDisplay[0]; // si elles sont dif alors on les = 
+    change = 1;
+  }
+  if (newDisplay[1] != oldDisplay[1]) {
+    oldDisplay[1] = newDisplay[1];
+    change = 1;
+  }
+  if (newDisplay[2] != oldDisplay[2]) {
+    oldDisplay[2] = newDisplay[2];                       
+    change = 1;
+  }
+
+  return change;
+}
