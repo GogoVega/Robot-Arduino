@@ -92,3 +92,15 @@ String LCDState() {                   // affichages des message sur LCD
 
   return "ERROR";
 }
+
+
+// Valeurs Batterie
+float* Batterie() {
+  static float Output[2] = {};
+  const float Tension = map(analogRead(BatteryPin), 0, 1023, 0, 500);         //tension cherhce la pin batteri , map = conversion l'entée analogique 
+  const float ChargeLevel = map(Tension, 0, 500, 0, 10000);                           // la mm    0 100%
+  Output[0] = Tension / 100;                                   // placement des variables dans le tableau      valeur tension 0à 5V
+  Output[1] = ChargeLevel / 100;
+
+  return Output;
+}
