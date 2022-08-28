@@ -47,3 +47,7 @@ void loop()
     }
     delay(10);
   }
+  
+    Serial.print("Position du servo : "); Serial.println(position);
+
+}
