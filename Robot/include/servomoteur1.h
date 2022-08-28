@@ -37,3 +37,13 @@ void loop()
     }
     delay(10);
   }
+
+    // Si Appuie BP2
+  if (b2 == LOW) {
+    monServomoteur.write(position);
+    position = position - 1;
+    if (position < 0) {
+      position = 0;
+    }
+    delay(10);
+  }
