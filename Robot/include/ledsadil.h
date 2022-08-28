@@ -124,3 +124,42 @@ int BlinkState() {
   }
 }
 
+// Gestion du strip LEDs
+void Blink() {
+  static int actualPixel = 0;
+  static int oldState;
+  int newState = BlinkState();
+
+  // INIT
+  if (newState != oldState) {
+    if (newState != 1 && newState != 10)
+      Headlights(false);
+    actualPixel = 0;
+    oldState = newState;
+  }
+
+  switch (newState) {
+    case 0:
+      actualPixel = Blinking(strip.Color(0, 0, 255), NUMPIXELS, actualPixel);
+      break;
+    case 1:
+    case 10:
+      Headlights(true);
+      break;
+    case 2:
+      Alert(strip.Color(255, 165, 0));  // Orange
+      break;
+    case 3:
+      Alert(strip.Color(0, 255, 0));  // Vert
+      break;
+    case 4:
+    case 5:
+      Alert(strip.Color(255, 0, 0));  // Rouge
+      break;
+    case 8:
+      actualPixel = Blinking(strip.Color(255, 165, 0), NUMPIXELS, actualPixel);
+      break;
+  }
+}
+
+#endif
